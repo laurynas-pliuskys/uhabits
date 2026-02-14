@@ -46,6 +46,7 @@ import org.isoron.uhabits.core.commands.CreateHabitCommand
 import org.isoron.uhabits.core.commands.EditHabitCommand
 import org.isoron.uhabits.core.models.Frequency
 import org.isoron.uhabits.core.models.Habit
+import org.isoron.uhabits.core.models.HabitDirection
 import org.isoron.uhabits.core.models.HabitType
 import org.isoron.uhabits.core.models.NumericalHabitType
 import org.isoron.uhabits.core.models.PaletteColor
@@ -84,6 +85,7 @@ class EditHabitActivity : AppCompatActivity() {
     var reminderHour = -1
     var reminderMin = -1
     var reminderDays: WeekdayList = WeekdayList.EVERY_DAY
+    var direction: HabitDirection = HabitDirection.POSITIVE
     var targetType = NumericalHabitType.AT_LEAST
 
     override fun onCreate(state: Bundle?) {
@@ -107,6 +109,7 @@ class EditHabitActivity : AppCompatActivity() {
             freqNum = habit.frequency.numerator
             freqDen = habit.frequency.denominator
             targetType = habit.targetType
+            direction = habit.direction
             habit.reminder?.let {
                 reminderHour = it.hour
                 reminderMin = it.minute
@@ -130,6 +133,7 @@ class EditHabitActivity : AppCompatActivity() {
             reminderHour = state.getInt("reminderHour")
             reminderMin = state.getInt("reminderMin")
             reminderDays = WeekdayList(state.getInt("reminderDays"))
+            direction = HabitDirection.fromInt(state.getInt("direction"))
         }
 
         updateColors()
@@ -160,6 +164,21 @@ class EditHabitActivity : AppCompatActivity() {
                 updateColors()
             }
             picker.dismissCurrentAndShow(supportFragmentManager, "colorPicker")
+        }
+
+        populateDirection()
+        binding.directionPicker.setOnClickListener {
+            val builder = AlertDialog.Builder(this)
+            val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_item)
+            arrayAdapter.add(getString(R.string.habit_direction_positive))
+            arrayAdapter.add(getString(R.string.habit_direction_negative))
+            builder.setAdapter(arrayAdapter) { dialog, which ->
+                direction = HabitDirection.fromInt(which)
+                populateDirection()
+                dialog.dismiss()
+            }
+            val dialog = builder.create()
+            dialog.dismissCurrentAndShow()
         }
 
         populateFrequency()
@@ -272,6 +291,7 @@ class EditHabitActivity : AppCompatActivity() {
         habit.question = binding.questionInput.text.trim().toString()
         habit.description = binding.notesInput.text.trim().toString()
         habit.color = color
+        habit.direction = direction
         if (reminderHour >= 0) {
             habit.reminder = Reminder(reminderHour, reminderMin, reminderDays)
         } else {
@@ -350,6 +370,13 @@ class EditHabitActivity : AppCompatActivity() {
         }
     }
 
+    private fun populateDirection() {
+        binding.directionPicker.text = when (direction) {
+            HabitDirection.POSITIVE -> getString(R.string.habit_direction_positive)
+            HabitDirection.NEGATIVE -> getString(R.string.habit_direction_negative)
+        }
+    }
+
     private fun updateColors() {
         androidColor = themeSwitcher.currentTheme.color(color).toInt()
         binding.colorButton.backgroundTintList = ColorStateList.valueOf(androidColor)
@@ -369,6 +396,7 @@ class EditHabitActivity : AppCompatActivity() {
         with(state) {
             putLong("habitId", habitId)
             putInt("habitType", habitType.value)
+            putInt("direction", direction.value)
             putInt("paletteColor", color.paletteIndex)
             putInt("androidColor", androidColor)
             putInt("freqNum", freqNum)

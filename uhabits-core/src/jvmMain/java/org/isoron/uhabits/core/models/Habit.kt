@@ -24,6 +24,7 @@ import java.util.UUID
 data class Habit(
     var color: PaletteColor = PaletteColor(8),
     var description: String = "",
+    var direction: HabitDirection = HabitDirection.POSITIVE,
     var frequency: Frequency = Frequency.DAILY,
     var id: Long? = null,
     var isArchived: Boolean = false,
@@ -111,6 +112,7 @@ data class Habit(
     fun copyFrom(other: Habit) {
         this.color = other.color
         this.description = other.description
+        this.direction = other.direction
         this.frequency = other.frequency
         // this.id should not be copied
         this.isArchived = other.isArchived
@@ -132,6 +134,7 @@ data class Habit(
 
         if (color != other.color) return false
         if (description != other.description) return false
+        if (direction != other.direction) return false
         if (frequency != other.frequency) return false
         if (id != other.id) return false
         if (isArchived != other.isArchived) return false
@@ -152,6 +155,7 @@ data class Habit(
     override fun hashCode(): Int {
         var result = color.hashCode()
         result = 31 * result + description.hashCode()
+        result = 31 * result + direction.hashCode()
         result = 31 * result + frequency.hashCode()
         result = 31 * result + (id?.hashCode() ?: 0)
         result = 31 * result + isArchived.hashCode()

@@ -22,6 +22,7 @@ import org.isoron.uhabits.core.database.Column
 import org.isoron.uhabits.core.database.Table
 import org.isoron.uhabits.core.models.Frequency
 import org.isoron.uhabits.core.models.Habit
+import org.isoron.uhabits.core.models.HabitDirection
 import org.isoron.uhabits.core.models.HabitType
 import org.isoron.uhabits.core.models.NumericalHabitType
 import org.isoron.uhabits.core.models.PaletteColor
@@ -76,6 +77,9 @@ class HabitRecord {
     @field:Column
     var type: Int? = null
 
+    @field:Column
+    var direction: Int? = null
+
     @field:Column(name = "target_value")
     var targetValue: Double? = null
 
@@ -100,6 +104,7 @@ class HabitRecord {
         color = model.color.paletteIndex
         archived = if (model.isArchived) 1 else 0
         type = model.type.value
+        direction = model.direction.value
         targetType = model.targetType.value
         targetValue = model.targetValue
         unit = model.unit
@@ -130,6 +135,7 @@ class HabitRecord {
         habit.color = PaletteColor(color!!)
         habit.isArchived = archived != 0
         habit.type = HabitType.fromInt(type!!)
+        habit.direction = HabitDirection.fromInt(direction ?: 0)
         habit.targetType = NumericalHabitType.fromInt(targetType!!)
         habit.targetValue = targetValue!!
         habit.unit = unit!!

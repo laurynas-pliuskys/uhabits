@@ -1,0 +1,30 @@
+<summary>
+## Summary: Add 'direction' field to Habit model
+
+### Changes Implemented
+- Created `HabitDirection` enum with POSITIVE (0) and NEGATIVE (1) values.
+- Updated `Habit` model to include `direction` field (default POSITIVE).
+- Updated `HabitRecord` to map `direction` field to database column.
+- Added UI strings for Direction selection.
+- Added Direction picker to `EditHabitActivity` and layout.
+- Added unit tests to verify `Habit` copying and `HabitRecord` persistence for the new field.
+
+### Files Modified
+- uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/models/HabitDirection.kt (New)
+- uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/models/Habit.kt
+- uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/models/sqlite/records/HabitRecord.kt
+- uhabits-android/src/main/res/values/strings.xml
+- uhabits-android/src/main/res/layout/activity_edit_habit.xml
+- uhabits-android/src/main/java/org/isoron/uhabits/activities/habits/edit/EditHabitActivity.kt
+- uhabits-core/src/jvmTest/java/org/isoron/uhabits/core/models/HabitTest.kt
+- uhabits-core/src/jvmTest/java/org/isoron/uhabits/core/models/sqlite/records/HabitRecordTest.kt
+
+### Notes for Developer
+- The database column `direction` already existed in the schema (added in migration 26.sql), so no new migration was needed, only the code mapping was missing.
+- Verification was done via Unit Tests (`HabitTest` and `HabitRecordTest`) instead of Playwright, as this is an Android/JVM project without a web frontend.
+
+### Verification Status
+- Added `test_copyAttributes` verification in `HabitTest.kt` to ensure direction is copied.
+- Added `testCopyRestoreDirection` in `HabitRecordTest.kt` to ensure direction is persisted to/from DB record.
+- Ran `./gradlew :uhabits-core:jvmTest` and confirmed tests pass (after verifying they fail with incorrect assertions).
+</summary>

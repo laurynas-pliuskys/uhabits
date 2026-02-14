@@ -140,6 +140,23 @@
                 </LinearLayout>
             </FrameLayout>
 
+            <!-- Habit Direction -->
+            <FrameLayout
+                android:id="@+id/directionOuterBox"
+                style="@style/FormOuterBox">
+                <LinearLayout style="@style/FormInnerBox">
+                    <TextView
+                        style="@style/FormLabel"
+                        android:text="@string/habit_direction" />
+                    <TextView
+                        style="@style/FormDropdown"
+                        android:id="@+id/directionPicker"
+                        android:text="@string/habit_direction_positive"
+                        android:textColor="?attr/contrast100"
+                        />
+                </LinearLayout>
+            </FrameLayout>
+
             <!-- Frequency -->
             <FrameLayout
                 android:id="@+id/frequencyOuterBox"

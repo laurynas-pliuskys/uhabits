@@ -71,4 +71,17 @@ class HabitRecordTest : BaseUnitTest() {
         record.copyTo(duplicate)
         assertThat(original, equalTo(duplicate))
     }
+
+    @Test
+    fun testCopyRestoreDirection() {
+        val original = modelFactory.buildHabit().apply {
+            direction = org.isoron.uhabits.core.models.HabitDirection.NEGATIVE
+        }
+        val record = HabitRecord()
+        record.copyFrom(original)
+        val duplicate = modelFactory.buildHabit()
+        record.copyTo(duplicate)
+        assertThat(original, equalTo(duplicate))
+        assertThat(duplicate.direction, equalTo(org.isoron.uhabits.core.models.HabitDirection.NEGATIVE))
+    }
 }
