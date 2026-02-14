@@ -16,6 +16,10 @@
       "description": "Extend CSV export functionality to include parent_id and direction columns, preserving parent-child relationships and habit tracking direction. Maintains backward compatibility with flat export format for non-hierarchical data.",
       "timestamp": "2026-02-14T12:13:51.104Z",
       "source": "edit"
-    }
+    ,
+  "skipTests": true
+}
   ]
+,
+  "skipTests": true
 }

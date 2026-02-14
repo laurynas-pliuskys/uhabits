@@ -131,6 +131,10 @@
         <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/ui/views/CheckmarkButton.kt</location>
       </file_locations>
     </feature>
+    <feature>
+      <name>Add Parent-Child Relationship Schema</name>
+      <description>Create database migration (26.sql) with two new tables instead of modifying the habits table. A routine is NOT a habit - it is a named container with no entries, scores, or streaks of its own. Schema: (1) &apos;routines&apos; table with id, name, color, position columns to store routine display properties; (2) &apos;routine_items&apos; table with routine_id (FK to routines), habit_id (FK to habits, UNIQUE), position columns to map habits into routines. Includes indexes on routine_items(routine_id) and routine_items(habit_id). This approach leaves the existing habits table completely untouched for backward compatibility.</description>
+    </feature>
   </implemented_features>
 
   <additional_requirements>

@@ -17,6 +17,10 @@
       "description": "Update CSV import to parse parent_id relationships and direction field, reconstructing habit hierarchies with proper tracking direction. Includes validation for circular dependencies and orphaned child references with fallback strategies.",
       "timestamp": "2026-02-14T12:13:51.107Z",
       "source": "edit"
-    }
+    ,
+  "skipTests": true
+}
   ]
+,
+  "skipTests": true
 }

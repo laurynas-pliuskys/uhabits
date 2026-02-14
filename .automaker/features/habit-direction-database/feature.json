@@ -1,6 +1,6 @@
 {
   "category": "enhancement",
-  "description": "Create migration to add 'direction' column to habits table with default value POSITIVE. Includes index for filtering habits by tracking direction type.",
+  "description": "[MERGED INTO hierarchical-database-schema] This ticket has been merged with 'hierarchical-database-schema' to create a single migration (26.sql) that adds both parent_id and direction columns to the Habits table. Implementing both changes in one migration avoids multiple schema changes to the same table. See hierarchical-database-schema for the combined implementation.",
   "id": "habit-direction-database",
   "title": "Database Schema for Habit Direction",
   "dependencies": [
@@ -14,6 +14,10 @@
       "description": "Create migration to add 'direction' column to habits table with default value POSITIVE. Includes index for filtering habits by tracking direction type.",
       "timestamp": "2026-02-14T12:13:51.066Z",
       "source": "initial"
-    }
+    ,
+  "skipTests": true
+}
   ]
+,
+  "skipTests": true
 }

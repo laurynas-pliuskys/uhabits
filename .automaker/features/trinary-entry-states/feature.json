@@ -9,4 +9,6 @@
   "dependencies": [],
   "createdAt": "2026-02-13T21:54:22.561Z",
   "updatedAt": "2026-02-13T21:54:22.561Z"
+,
+  "skipTests": true
 }

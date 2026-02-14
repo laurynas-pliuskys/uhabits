@@ -60,6 +60,18 @@ build.sh           # CI/CD build script
 - View tests compare against prerendered images in `uhabits-android/src/androidTest/`
 - All animations must be disabled on test emulator (0 duration scale)
 
+## Verification Requirements
+
+**IMPORTANT:** All features have `skipTests: true` and MUST pass these checks before approval:
+
+### Required Verification Steps (in order):
+1. ✅ **Build Check** - `./gradlew assembleDebug` must succeed
+2. ✅ **Unit Tests** - `./gradlew test` must pass
+3. ✅ **Code Style** - `./gradlew ktlintCheck` must pass
+4. ✅ **UI Verification** - For UI changes, use android-tester skill to verify on emulator
+
+**DO NOT** mark a feature as complete/verified until ALL applicable steps pass.
+
 ## Autonomous Verification
 
 Use the **android-tester** skill for UI-level verification:

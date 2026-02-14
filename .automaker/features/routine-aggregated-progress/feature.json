@@ -16,6 +16,10 @@
       "description": "Implement logic to compute routine-level completion count by aggregating child habit entries per day. Returns numeric completion count (completed children) and total count for display in collapsed routine view. Supports weighted averaging and configurable aggregation rules (all/any/majority completion).",
       "timestamp": "2026-02-14T12:13:51.083Z",
       "source": "edit"
-    }
+    ,
+  "skipTests": true
+}
   ]
+,
+  "skipTests": true
 }

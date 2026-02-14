@@ -18,3 +18,10 @@ node_modules
 *.sketch
 crowdin.yml
 kotlin-js-store
+
+# Automaker runtime state (don't version control)
+.automaker/events/
+.automaker/notifications.json
+.automaker/context/context-metadata.json
+.automaker/features/*/agent-output.md
+.automaker/features/*/*.bak*

@@ -13,4 +13,6 @@
   "createdAt": "2026-02-13T21:54:22.574Z",
   "updatedAt": "2026-02-13T21:54:22.574Z",
   "descriptionHistory": []
+,
+  "skipTests": true
 }

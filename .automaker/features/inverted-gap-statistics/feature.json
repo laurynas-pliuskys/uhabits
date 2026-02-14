@@ -15,6 +15,10 @@
       "description": "Extend gap analysis to invert calculations based on habit direction. For NEGATIVE habits, calculates intervals between failures (crosses) instead of successes. Updates all statistics displays to reflect appropriate metrics.",
       "timestamp": "2026-02-14T12:13:51.073Z",
       "source": "initial"
-    }
+    ,
+  "skipTests": true
+}
   ]
+,
+  "skipTests": true
 }

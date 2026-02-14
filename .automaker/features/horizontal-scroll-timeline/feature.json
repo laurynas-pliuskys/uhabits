@@ -14,6 +14,10 @@
       "description": "Replace static 4-day checkmark grid with horizontal scrollable timeline showing last 30 days. Implements snap-to-today behavior on view load with smooth horizontal scrolling. Swaps layout so dates/ticks are on left, habit names on right.",
       "timestamp": "2026-02-14T12:13:51.058Z",
       "source": "initial"
-    }
+    ,
+  "skipTests": true
+}
   ]
+,
+  "skipTests": true
 }
