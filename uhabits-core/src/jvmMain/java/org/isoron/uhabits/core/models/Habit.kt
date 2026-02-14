@@ -28,6 +28,7 @@ data class Habit(
     var id: Long? = null,
     var isArchived: Boolean = false,
     var name: String = "",
+    var parentId: Long? = null,
     var position: Int = 0,
     var question: String = "",
     var reminder: Reminder? = null,
@@ -114,6 +115,7 @@ data class Habit(
         // this.id should not be copied
         this.isArchived = other.isArchived
         this.name = other.name
+        this.parentId = other.parentId
         this.position = other.position
         this.question = other.question
         this.reminder = other.reminder
@@ -134,6 +136,7 @@ data class Habit(
         if (id != other.id) return false
         if (isArchived != other.isArchived) return false
         if (name != other.name) return false
+        if (parentId != other.parentId) return false
         if (position != other.position) return false
         if (question != other.question) return false
         if (reminder != other.reminder) return false
@@ -153,6 +156,7 @@ data class Habit(
         result = 31 * result + (id?.hashCode() ?: 0)
         result = 31 * result + isArchived.hashCode()
         result = 31 * result + name.hashCode()
+        result = 31 * result + (parentId?.hashCode() ?: 0)
         result = 31 * result + position
         result = 31 * result + question.hashCode()
         result = 31 * result + (reminder?.hashCode() ?: 0)

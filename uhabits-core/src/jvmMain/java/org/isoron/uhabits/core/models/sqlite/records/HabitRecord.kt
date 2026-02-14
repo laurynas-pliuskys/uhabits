@@ -43,6 +43,9 @@ class HabitRecord {
     @field:Column
     var name: String? = null
 
+    @field:Column(name = "parent_id")
+    var parentId: Long? = null
+
     @field:Column(name = "freq_num")
     var freqNum: Int? = null
 
@@ -91,6 +94,7 @@ class HabitRecord {
     fun copyFrom(model: Habit) {
         id = model.id
         name = model.name
+        parentId = model.parentId
         description = model.description
         highlight = 0
         color = model.color.paletteIndex
@@ -119,6 +123,7 @@ class HabitRecord {
     fun copyTo(habit: Habit) {
         habit.id = id
         habit.name = name!!
+        habit.parentId = parentId
         habit.description = description!!
         habit.question = question!!
         habit.frequency = Frequency(freqNum!!, freqDen!!)
