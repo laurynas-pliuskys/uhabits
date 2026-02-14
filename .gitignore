@@ -25,3 +25,4 @@ kotlin-js-store
 .automaker/context/context-metadata.json
 .automaker/features/*/agent-output.md
 .automaker/features/*/*.bak*
+summary_output.txt

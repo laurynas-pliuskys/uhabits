@@ -34,6 +34,8 @@ class SQLiteHabitList @Inject constructor(private val modelFactory: ModelFactory
     private val repository: Repository<HabitRecord> = modelFactory.buildHabitListRepository()
     private val list: MemoryHabitList = MemoryHabitList()
     private var loaded = false
+    private val childrenCache = mutableMapOf<Long?, MutableList<Habit>>()
+
     private fun loadRecords() {
         if (loaded) return
         loaded = true
@@ -47,6 +49,7 @@ class SQLiteHabitList @Inject constructor(private val modelFactory: ModelFactory
             (h.originalEntries as SQLiteEntryList).habitId = h.id
             list.add(h)
         }
+        rebuildCache()
         if (shouldRebuildOrder) rebuildOrder()
     }
 
@@ -60,6 +63,7 @@ class SQLiteHabitList @Inject constructor(private val modelFactory: ModelFactory
         habit.id = record.id
         (habit.originalEntries as SQLiteEntryList).habitId = record.id
         list.add(habit)
+        childrenCache.getOrPut(habit.parentId) { ArrayList() }.add(habit)
         observable.notifyListeners()
     }
 
@@ -67,6 +71,31 @@ class SQLiteHabitList @Inject constructor(private val modelFactory: ModelFactory
     override fun getById(id: Long): Habit? {
         loadRecords()
         return list.getById(id)
+    }
+
+    @Synchronized
+    fun getChildren(parentId: Long?): List<Habit> {
+        loadRecords()
+        return childrenCache[parentId] ?: emptyList()
+    }
+
+    @Synchronized
+    fun getTopLevelHabits(): List<Habit> {
+        return getChildren(null)
+    }
+
+    @Synchronized
+    fun validateCircularDependency(child: Habit, newParentId: Long?) {
+        loadRecords()
+        if (newParentId == null) return
+        if (child.id == newParentId) throw IllegalArgumentException("Habit cannot be its own parent")
+
+        var ancestorId = newParentId
+        while (ancestorId != null) {
+            if (ancestorId == child.id) throw IllegalArgumentException("Circular dependency detected")
+            val ancestor = getById(ancestorId) ?: break
+            ancestorId = ancestor.parentId
+        }
     }
 
     @Synchronized
@@ -139,6 +168,7 @@ class SQLiteHabitList @Inject constructor(private val modelFactory: ModelFactory
             h.originalEntries.clear()
             repository.remove(record)
         }
+        childrenCache[h.parentId]?.remove(h)
         rebuildOrder()
         observable.notifyListeners()
     }
@@ -148,6 +178,7 @@ class SQLiteHabitList @Inject constructor(private val modelFactory: ModelFactory
         list.removeAll()
         repository.execSQL("delete from habits")
         repository.execSQL("delete from repetitions")
+        childrenCache.clear()
         observable.notifyListeners()
     }
 
@@ -205,6 +236,7 @@ class SQLiteHabitList @Inject constructor(private val modelFactory: ModelFactory
             record.copyFrom(h)
             repository.save(record)
         }
+        rebuildCache()
         observable.notifyListeners()
     }
 
@@ -216,5 +248,13 @@ class SQLiteHabitList @Inject constructor(private val modelFactory: ModelFactory
     @Synchronized
     fun reload() {
         loaded = false
+        childrenCache.clear()
+    }
+
+    private fun rebuildCache() {
+        childrenCache.clear()
+        for (habit in list) {
+            childrenCache.getOrPut(habit.parentId) { ArrayList() }.add(habit)
+        }
     }
 }
