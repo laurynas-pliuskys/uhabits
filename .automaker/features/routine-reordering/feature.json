@@ -1,0 +1,14 @@
+{
+  "id": "routine-reordering",
+  "category": "UI",
+  "title": "Drag-and-Drop Routine Reorganization",
+  "description": "Implement touch-based drag handles for reordering habits within routines and moving items between parent groups. Updates position field and parent_id atomically with visual feedback.",
+  "status": "backlog",
+  "priority": 3,
+  "complexity": "complex",
+  "dependencies": [
+    "accordion-adapter"
+  ],
+  "createdAt": "2026-02-13T21:54:22.583Z",
+  "updatedAt": "2026-02-13T21:54:22.583Z"
+}

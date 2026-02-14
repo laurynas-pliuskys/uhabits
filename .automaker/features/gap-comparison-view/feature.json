@@ -1,0 +1,17 @@
+{
+  "id": "gap-comparison-view",
+  "category": "UI",
+  "title": "Multi-Habit Gap Comparison Chart",
+  "description": "Build comparative visualization showing gap analysis trends across multiple selected habits simultaneously. Enables pattern identification and correlation analysis between different routines with synchronized time axes.",
+  "status": "backlog",
+  "priority": 3,
+  "complexity": "complex",
+  "dependencies": [
+    "gap-bar-chart",
+    "sma-calculator",
+    "inverted-gap-statistics"
+  ],
+  "createdAt": "2026-02-13T21:54:22.590Z",
+  "updatedAt": "2026-02-13T21:54:22.590Z",
+  "descriptionHistory": []
+}

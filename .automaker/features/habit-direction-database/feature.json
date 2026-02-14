@@ -1,0 +1,19 @@
+{
+  "category": "enhancement",
+  "description": "Create migration to add 'direction' column to habits table with default value POSITIVE. Includes index for filtering habits by tracking direction type.",
+  "id": "habit-direction-database",
+  "title": "Database Schema for Habit Direction",
+  "dependencies": [
+    "hierarchical-database-schema"
+  ],
+  "priority": 1,
+  "status": "backlog",
+  "branchName": "dev",
+  "descriptionHistory": [
+    {
+      "description": "Create migration to add 'direction' column to habits table with default value POSITIVE. Includes index for filtering habits by tracking direction type.",
+      "timestamp": "2026-02-14T12:13:51.066Z",
+      "source": "initial"
+    }
+  ]
+}

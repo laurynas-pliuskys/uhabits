@@ -1,0 +1,14 @@
+{
+  "id": "routine-aggregated-progress",
+  "category": "Core",
+  "title": "Parent Habit Progress Aggregation",
+  "description": "Implement logic to compute routine-level completion status by aggregating child habit entries. Supports weighted averaging and configurable aggregation rules (all/any/majority completion).",
+  "status": "backlog",
+  "priority": 2,
+  "complexity": "complex",
+  "dependencies": [
+    "hierarchy-repository-methods"
+  ],
+  "createdAt": "2026-02-13T21:54:22.576Z",
+  "updatedAt": "2026-02-13T21:54:22.576Z"
+}

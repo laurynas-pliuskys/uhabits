@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project_specification>
+  <project_name>Loop Routine Manager (Evolution of Loop Habit Tracker)</project_name>
+
+  <overview>
+    This project transforms the existing Loop Habit Tracker into a hierarchical Routine Manager with advanced interval gap analysis capabilities. The current Loop Habit Tracker is an open-source Android application (GPLv3) that helps users create and maintain good habits through tracking, detailed statistics, and visualizations. The evolution to Routine Manager introduces: (1) Hierarchical Data Structure - enabling parent-child relationships between habits, allowing top-level &quot;Routines&quot; to contain sub-habits &quot;Items&quot;; (2) Expandable Accordion UI - transforming the flat RecyclerView list into grouped, expandable sections while maintaining the 7-day completion grid; (3) Trinary State Logic - extending the checkmark system from binary (Yes/No) to three states: Success (Tick), Failure (Cross), and Unknown (Grey Circle); (4) Interval Analysis Engine - calculating gaps between specific states (e.g., days between failures); (5) Gap Visualization - new statistics view with bar charts showing stint durations and Simple Moving Average (SMA) trend lines. The project maintains backward compatibility with existing Loop data and adheres to Material Design 3 patterns.
+  </overview>
+
+  <technology_stack>
+    <technology>Kotlin 2.1.10</technology>
+    <technology>Android SDK 36 (minSdk 28)</technology>
+    <technology>Kotlin Multiplatform (JVM target)</technology>
+    <technology>SQLite (custom ORM via Repository pattern)</technology>
+    <technology>Dagger 2.55 (Dependency Injection)</technology>
+    <technology>Kotlin Coroutines 1.10.1</technology>
+    <technology>Material Design Components 1.12.0</technology>
+    <technology>AndroidX AppCompat 1.7.0</technology>
+    <technology>Ktor Client 1.6.8 (HTTP client)</technology>
+    <technology>OpenCSV 5.9 (CSV import/export)</technology>
+    <technology>Guava 33.2.1-android</technology>
+    <technology>JUnit 4/5 (Testing)</technology>
+    <technology>Espresso (UI Testing)</technology>
+    <technology>Mockito-Kotlin 5.4.0</technology>
+    <technology>KSP 2.1.10 (Kotlin Symbol Processing)</technology>
+    <technology>ktlint (Code formatting)</technology>
+    <technology>Gradle Kotlin DSL</technology>
+    <technology>Git-flow branching model</technology>
+    <technology>View Binding</technology>
+    <technology>AppIntro 6.3.1</technology>
+    <technology>Konfetti 2.0.2 (Animations)</technology>
+  </technology_stack>
+
+  <core_capabilities>
+    <capability>Habit tracking with flexible scheduling (daily, weekly, custom frequencies)</capability>
+    <capability>Habit score calculation with advanced decay formula</capability>
+    <capability>7-day completion grid visualization</capability>
+    <capability>Multiple checkmark states (YES_MANUAL, YES_AUTO, NO, SKIP, UNKNOWN)</capability>
+    <capability>Boolean and Numerical habit types</capability>
+    <capability>Target value tracking (AT_LEAST, AT_MOST modes)</capability>
+    <capability>Streak calculation and visualization</capability>
+    <capability>Score history charts and statistics</capability>
+    <capability>Frequency analysis charts</capability>
+    <capability>History calendar view with editing</capability>
+    <capability>Bar charts for aggregated data</capability>
+    <capability>CSV and SQLite database export/import</capability>
+    <capability>Home screen widgets (Checkmark, Score, History, Frequency, Streak, Target)</capability>
+    <capability>Customizable reminders with notification actions</capability>
+    <capability>Dark/Light theme support</capability>
+    <capability>Tasker automation integration</capability>
+    <capability>Multi-language localization</capability>
+    <capability>Automatic cloud backup support</capability>
+    <capability>Material Design 3 UI patterns</capability>
+  </core_capabilities>
+
+  <implemented_features>
+    <feature>
+      <name>Flat Habit List with RecyclerView</name>
+      <description>Current implementation uses HabitCardListAdapter and HabitCardView to display habits in a flat, scrollable list with caching via HabitCardListCache</description>
+      <file_locations>
+        <location>uhabits-android/src/main/java/org/isoron/uhabits/activities/habits/list/views/HabitCardListAdapter.kt</location>
+        <location>uhabits-android/src/main/java/org/isoron/uhabits/activities/habits/list/views/HabitCardView.kt</location>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/ui/screens/habits/list/HabitCardListCache.kt</location>
+      </file_locations>
+    </feature>
+    <feature>
+      <name>Habit Model and SQLite Persistence</name>
+      <description>Habit data model with fields for name, description, frequency, color, type, target, reminders, and position. Persisted via HabitRecord and SQLiteHabitList with custom Repository pattern</description>
+      <file_locations>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/models/Habit.kt</location>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/models/sqlite/records/HabitRecord.kt</location>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/models/sqlite/SQLiteHabitList.kt</location>
+      </file_locations>
+    </feature>
+    <feature>
+      <name>Entry/Checkmark System</name>
+      <description>Current entry states: YES_MANUAL (2), YES_AUTO (1), NO (0), SKIP (3), UNKNOWN (-1). EntryList manages timestamps and values with recomputation logic for non-daily habits</description>
+      <file_locations>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/models/Entry.kt</location>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/models/EntryList.kt</location>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/models/sqlite/SQLiteEntryList.kt</location>
+      </file_locations>
+    </feature>
+    <feature>
+      <name>Score Calculation Engine</name>
+      <description>Advanced score computation based on frequency, habit type, target values, and rolling sums. Supports both boolean and numerical habits with AT_LEAST/AT_MOST modes</description>
+      <file_locations>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/models/ScoreList.kt</location>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/models/Score.kt</location>
+      </file_locations>
+    </feature>
+    <feature>
+      <name>Streak Tracking</name>
+      <description>StreakList recomputes consecutive successful days, filtering by entry values and numerical targets. Returns best streaks sorted by length</description>
+      <file_locations>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/models/StreakList.kt</location>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/models/Streak.kt</location>
+      </file_locations>
+    </feature>
+    <feature>
+      <name>Statistics Visualizations</name>
+      <description>Multiple chart types including BarChart, HistoryChart, ScoreChart, FrequencyChart, StreakChart, and TargetChart using custom Canvas rendering</description>
+      <file_locations>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/ui/views/BarChart.kt</location>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/ui/views/HistoryChart.kt</location>
+        <location>uhabits-android/src/main/java/org/isoron/uhabits/activities/common/views/ScoreChart.kt</location>
+      </file_locations>
+    </feature>
+    <feature>
+      <name>Database Migration System</name>
+      <description>MigrationHelper processes sequential SQL migration files (09.sql through 25.sql) to safely upgrade database schema versions</description>
+      <file_locations>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/database/MigrationHelper.kt</location>
+        <location>uhabits-core/src/jvmMain/resources/migrations/</location>
+      </file_locations>
+    </feature>
+    <feature>
+      <name>Widget System</name>
+      <description>Multiple widget types: CheckmarkWidget, ScoreWidget, HistoryWidget, FrequencyWidget, StreakWidget, TargetWidget with WidgetUpdater coordination</description>
+      <file_locations>
+        <location>uhabits-android/src/main/java/org/isoron/uhabits/widgets/CheckmarkWidget.kt</location>
+        <location>uhabits-android/src/main/java/org/isoron/uhabits/widgets/WidgetUpdater.kt</location>
+        <location>uhabits-android/src/main/java/org/isoron/uhabits/widgets/BaseWidget.kt</location>
+      </file_locations>
+    </feature>
+    <feature>
+      <name>Checkmark Panel UI</name>
+      <description>CheckmarkPanelView and CheckmarkButtonView render the 7-day completion grid with toggle and edit interactions</description>
+      <file_locations>
+        <location>uhabits-android/src/main/java/org/isoron/uhabits/activities/habits/list/views/CheckmarkPanelView.kt</location>
+        <location>uhabits-android/src/main/java/org/isoron/uhabits/activities/habits/list/views/CheckmarkButtonView.kt</location>
+        <location>uhabits-core/src/jvmMain/java/org/isoron/uhabits/core/ui/views/CheckmarkButton.kt</location>
+      </file_locations>
+    </feature>
+  </implemented_features>
+
+  <additional_requirements>
+    <requirement>Maintain backward compatibility with existing Loop Habit Tracker user data and database schemas</requirement>
+    <requirement>Database migrations must be handled safely via the existing MigrationHelper system (create new numbered SQL files)</requirement>
+    <requirement>Follow Material Design 3 UI patterns consistent with existing app styling</requirement>
+    <requirement>Preserve existing widget functionality while adding support for hierarchical habits</requirement>
+    <requirement>Support Android SDK 28+ (API level 28 minimum)</requirement>
+    <requirement>Code must pass ktlint formatting checks</requirement>
+    <requirement>Unit tests required for core logic, Espresso tests for UI components</requirement>
+    <requirement>Multi-module architecture: uhabits-core (JVM/multiplatform) for business logic, uhabits-android for Android-specific code</requirement>
+  </additional_requirements>
+
+  <development_guidelines>
+    <guideline>Follow ktlint code style with default settings - run &apos;./gradlew ktlintCheck&apos; before committing</guideline>
+    <guideline>Write new classes in Kotlin (Java only for legacy code)</guideline>
+    <guideline>Submit pull requests against the &apos;dev&apos; branch (git-flow model)</guideline>
+    <guideline>Keep pull requests small and independent</guideline>
+    <guideline>Separate refactoring from feature work</guideline>
+    <guideline>For UI changes, create mockups first and submit draft PRs for feedback</guideline>
+    <guideline>AI-assisted code must follow guidelines strictly and be discussed before implementation</guideline>
+    <guideline>Use View Binding for Android views</guideline>
+    <guideline>Dependency injection via Dagger 2</guideline>
+    <guideline>Use coroutines for async operations</guideline>
+    <guideline>Test coverage required: unit tests in jvmTest, instrumentation tests in androidTest</guideline>
+  </development_guidelines>
+
+  <implementation_roadmap>
+    <phase>
+      <name>Phase 1: Hierarchical Data Structure</name>
+      <status>pending</status>
+      <description>Add nullable &apos;parentId&apos; field to Habit model and HabitRecord. Create database migration (26.sql) to add parent_id column to habits table. Update SQLiteHabitList to handle parent-child relationships. Implement methods to get children of a habit and identify top-level habits. Items without children display as standalone habits.</description>
+    </phase>
+    <phase>
+      <name>Phase 2: Trinary State Logic</name>
+      <status>pending</status>
+      <description>Extend Entry companion constants to include explicit FAILURE state (distinct from NO). Update Entry.nextToggleValue() to cycle through Success -&gt; Failure -&gt; Unknown. Modify CheckmarkButton rendering to show three distinct icons: Tick (success), Cross (failure), Grey Circle (unknown). Update CheckmarkPanelView and related UI components.</description>
+    </phase>
+    <phase>
+      <name>Phase 3: Expandable Accordion UI</name>
+      <status>pending</status>
+      <description>Refactor HabitCardListAdapter to group habits by parentId. Create RoutineCardView for parent habits with expand/collapse functionality. Modify HabitCardListView to handle nested RecyclerView or expandable item groups. Maintain 7-day grid functionality at both routine and item levels. Items without parents display at top level as regular habits.</description>
+    </phase>
+    <phase>
+      <name>Phase 4: Interval Analysis Engine</name>
+      <status>pending</status>
+      <description>Create GapAnalyzer class in uhabits-core to calculate intervals between specific entry states (e.g., consecutive failures). Implement logic to identify &apos;stints&apos; - periods between state transitions. Add configuration for which states to analyze (Success gaps vs Failure gaps). Integrate with existing EntryList data structure.</description>
+    </phase>
+    <phase>
+      <name>Phase 5: Gap Visualization</name>
+      <status>pending</status>
+      <description>Create GapBarChart view extending existing BarChart patterns. Each bar represents a stint duration. Implement Simple Moving Average (SMA) calculation for trend line overlay. Create GapStatisticsCard for ShowHabitView. Add new statistics screen accessible from habit details showing gap analysis over time.</description>
+    </phase>
+    <phase>
+      <name>Phase 6: Integration &amp; Testing</name>
+      <status>pending</status>
+      <description>Write comprehensive unit tests for GapAnalyzer and hierarchical habit operations. Create Espresso UI tests for accordion behavior and trinary checkmark interactions. Test database migration with existing user data. Verify backward compatibility with flat habit lists. Update CSV export to include parent-child relationships.</description>
+    </phase>
+  </implementation_roadmap>
+</project_specification>

@@ -1,0 +1,22 @@
+{
+  "id": "gap-bar-chart",
+  "category": "UI",
+  "title": "Gap Duration Bar Chart Visualization",
+  "description": "Create GapBarChart.kt extending existing BarChart patterns. X-axis shows chronological streaks/gaps, Y-axis shows duration in days. Displays stint durations as vertical bars with configurable-period SMA trend line overlay, color-coded by state type, and interactive tap-to-detail functionality. Direction-aware for positive vs negative habit tracking.",
+  "status": "backlog",
+  "priority": 2,
+  "complexity": "complex",
+  "dependencies": [
+    "sma-calculator",
+    "stint-data-model"
+  ],
+  "createdAt": "2026-02-13T21:54:22.573Z",
+  "updatedAt": "2026-02-13T21:54:22.573Z",
+  "descriptionHistory": [
+    {
+      "description": "Create GapBarChart.kt extending existing BarChart patterns. X-axis shows chronological streaks/gaps, Y-axis shows duration in days. Displays stint durations as vertical bars with configurable-period SMA trend line overlay, color-coded by state type, and interactive tap-to-detail functionality. Direction-aware for positive vs negative habit tracking.",
+      "timestamp": "2026-02-14T12:13:51.088Z",
+      "source": "edit"
+    }
+  ]
+}

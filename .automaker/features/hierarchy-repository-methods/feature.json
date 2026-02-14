@@ -1,0 +1,14 @@
+{
+  "id": "hierarchy-repository-methods",
+  "category": "Core",
+  "title": "Hierarchical Query Methods",
+  "description": "Extend SQLiteHabitList with methods to retrieve children by parent ID, identify top-level habits (null parent), and validate circular dependency prevention. Includes efficient querying with parent-child relationship caching.",
+  "status": "backlog",
+  "priority": 1,
+  "complexity": "moderate",
+  "dependencies": [
+    "habit-model-hierarchy"
+  ],
+  "createdAt": "2026-02-13T21:54:22.558Z",
+  "updatedAt": "2026-02-13T21:54:22.558Z"
+}

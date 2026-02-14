@@ -1,0 +1,19 @@
+{
+  "category": "enhancement",
+  "description": "Add user-configurable setting for Simple Moving Average window size in gap analysis charts. Provides UI control (slider/picker) to adjust aggregation period dynamically.",
+  "id": "configurable-sma-period",
+  "title": "Configurable SMA Period Setting",
+  "dependencies": [
+    "sma-calculator"
+  ],
+  "priority": 2,
+  "status": "backlog",
+  "branchName": "dev",
+  "descriptionHistory": [
+    {
+      "description": "Add user-configurable setting for Simple Moving Average window size in gap analysis charts. Provides UI control (slider/picker) to adjust aggregation period dynamically.",
+      "timestamp": "2026-02-14T12:13:51.071Z",
+      "source": "initial"
+    }
+  ]
+}

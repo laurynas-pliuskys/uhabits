@@ -1,0 +1,21 @@
+{
+  "id": "routine-aggregated-progress",
+  "category": "Core",
+  "title": "Parent Habit Progress Aggregation",
+  "description": "Implement logic to compute routine-level completion count by aggregating child habit entries per day. Returns numeric completion count (completed children) and total count for display in collapsed routine view. Supports weighted averaging and configurable aggregation rules (all/any/majority completion).",
+  "status": "backlog",
+  "priority": 2,
+  "complexity": "complex",
+  "dependencies": [
+    "hierarchy-repository-methods"
+  ],
+  "createdAt": "2026-02-13T21:54:22.576Z",
+  "updatedAt": "2026-02-13T21:54:22.576Z",
+  "descriptionHistory": [
+    {
+      "description": "Implement logic to compute routine-level completion count by aggregating child habit entries per day. Returns numeric completion count (completed children) and total count for display in collapsed routine view. Supports weighted averaging and configurable aggregation rules (all/any/majority completion).",
+      "timestamp": "2026-02-14T12:13:51.083Z",
+      "source": "edit"
+    }
+  ]
+}

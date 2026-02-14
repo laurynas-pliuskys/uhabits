@@ -1,0 +1,14 @@
+{
+  "id": "routine-templates",
+  "category": "Core",
+  "title": "Pre-defined Routine Templates",
+  "description": "Add template system for common routine structures (morning routine, workout program, study schedule) with one-tap instantiation. Templates include pre-configured child habits with suggested frequencies.",
+  "status": "backlog",
+  "priority": 3,
+  "complexity": "moderate",
+  "dependencies": [
+    "hierarchy-repository-methods"
+  ],
+  "createdAt": "2026-02-13T21:54:22.588Z",
+  "updatedAt": "2026-02-13T21:54:22.588Z"
+}

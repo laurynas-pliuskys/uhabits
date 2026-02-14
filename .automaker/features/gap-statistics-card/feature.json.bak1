@@ -1,0 +1,14 @@
+{
+  "id": "gap-statistics-card",
+  "category": "UI",
+  "title": "Gap Analysis Statistics Card",
+  "description": "Build GapStatisticsCard.kt for ShowHabitView displaying average stint duration, longest/shortest gaps, and trend indicators. Integrates with existing statistics panel layout.",
+  "status": "backlog",
+  "priority": 2,
+  "complexity": "moderate",
+  "dependencies": [
+    "gap-bar-chart"
+  ],
+  "createdAt": "2026-02-13T21:54:22.574Z",
+  "updatedAt": "2026-02-13T21:54:22.574Z"
+}
