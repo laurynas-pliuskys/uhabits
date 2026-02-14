@@ -5,6 +5,7 @@
 *.swp
 *~.nib
 *.hprof
+.worktrees
 .DS_Store
 ._.DS_Store
 .externalNativeBuild
@@ -20,8 +21,13 @@ crowdin.yml
 kotlin-js-store
 
 # Automaker runtime state (don't version control)
+.automaker/active-branches.json
+.automaker/settings.json
+.automaker/settings.json.bak*
 .automaker/events/
 .automaker/notifications.json
-.automaker/context/context-metadata.json
-.automaker/features/*/agent-output.md
-.automaker/features/*/*.bak*
+.automaker/features/
+.automaker/worktrees/
+
+.kotlin/
+summary_output.txt

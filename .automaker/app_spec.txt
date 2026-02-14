@@ -135,6 +135,22 @@
       <name>Add Parent-Child Relationship Schema</name>
       <description>Create database migration (26.sql) with two new tables instead of modifying the habits table. A routine is NOT a habit - it is a named container with no entries, scores, or streaks of its own. Schema: (1) &apos;routines&apos; table with id, name, color, position columns to store routine display properties; (2) &apos;routine_items&apos; table with routine_id (FK to routines), habit_id (FK to habits, UNIQUE), position columns to map habits into routines. Includes indexes on routine_items(routine_id) and routine_items(habit_id). This approach leaves the existing habits table completely untouched for backward compatibility.</description>
     </feature>
+    <feature>
+      <name>Add Hierarchy &amp; Direction to Habits Table</name>
+      <description>Create database migration (26.sql) to extend the Habits table with two new columns: (1) &apos;parent_id&apos; integer nullable column with foreign key reference to Habits(id) for hierarchical parent-child relationships - enables grouping habits under parent routines; (2) &apos;direction&apos; integer column with default value 0 (POSITIVE) to support habit tracking direction (POSITIVE=0 for &apos;things to do&apos;, NEGATIVE=1 for &apos;things to avoid&apos;). Includes index on parent_id for efficient hierarchy queries and index on direction for filtering. This single migration combines both hierarchical structure and direction tracking, avoiding multiple migrations to the same table. Note: This supersedes the separate &apos;habit-direction-database&apos; ticket which would have created a redundant migration.</description>
+    </feature>
+    <feature>
+      <name>Address PR #1 Review Comments</name>
+      <description>Read the review requests on PR #1 and address any feedback the best you can.</description>
+    </feature>
+    <feature>
+      <name>Extend Habit Model with Parent ID</name>
+      <description>Add nullable parentId field to Habit.kt and HabitRecord.kt. Update constructors, serialization, and equality methods to support hierarchical relationships.</description>
+    </feature>
+    <feature>
+      <name>Positive/Negative Habit Direction Toggle</name>
+      <description>Add &apos;direction&apos; field to Habit model (POSITIVE/NEGATIVE enum). Extends habit creation UI with toggle for tracking positive goals (ticks matter) vs negative/avoidance goals (crosses matter). Required for inverted statistics calculations.</description>
+    </feature>
   </implemented_features>
 
   <additional_requirements>
