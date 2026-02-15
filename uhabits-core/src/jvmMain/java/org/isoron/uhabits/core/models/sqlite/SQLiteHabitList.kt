@@ -19,10 +19,13 @@
 package org.isoron.uhabits.core.models.sqlite
 
 import org.isoron.uhabits.core.database.Repository
+import org.isoron.uhabits.core.models.Entry
 import org.isoron.uhabits.core.models.Habit
 import org.isoron.uhabits.core.models.HabitList
 import org.isoron.uhabits.core.models.HabitMatcher
 import org.isoron.uhabits.core.models.ModelFactory
+import org.isoron.uhabits.core.models.RoutineCompletionCount
+import org.isoron.uhabits.core.models.Timestamp
 import org.isoron.uhabits.core.models.memory.MemoryHabitList
 import org.isoron.uhabits.core.models.sqlite.records.HabitRecord
 import javax.inject.Inject
@@ -96,6 +99,27 @@ class SQLiteHabitList @Inject constructor(private val modelFactory: ModelFactory
             val ancestor = getById(ancestorId) ?: break
             ancestorId = ancestor.parentId
         }
+    }
+
+    /**
+     * Computes the routine-level completion count for a parent habit by aggregating
+     * child habit entries for a given day.
+     *
+     * A child habit is considered completed if its entry value is YES_MANUAL or YES_AUTO
+     * for the given timestamp.
+     *
+     * @param parentId The ID of the parent habit (routine)
+     * @param timestamp The timestamp for which to compute the completion count
+     * @return RoutineCompletionCount containing the number of completed children and total children
+     */
+    @Synchronized
+    fun getRoutineCompletionCount(parentId: Long, timestamp: Timestamp): RoutineCompletionCount {
+        val children = getChildren(parentId)
+        val completedCount = children.count { child ->
+            val entry = child.computedEntries.get(timestamp)
+            entry.value == Entry.YES_MANUAL || entry.value == Entry.YES_AUTO
+        }
+        return RoutineCompletionCount(completedCount, children.size)
     }
 
     @Synchronized

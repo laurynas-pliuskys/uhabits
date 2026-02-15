@@ -23,6 +23,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.isoron.uhabits.core.BaseUnitTest
 import org.isoron.uhabits.core.database.Database
 import org.isoron.uhabits.core.database.Repository
+import org.isoron.uhabits.core.models.Entry
 import org.isoron.uhabits.core.models.Habit
 import org.isoron.uhabits.core.models.HabitList
 import org.isoron.uhabits.core.models.HabitMatcher
@@ -31,6 +32,7 @@ import org.isoron.uhabits.core.models.Reminder
 import org.isoron.uhabits.core.models.WeekdayList
 import org.isoron.uhabits.core.models.sqlite.records.HabitRecord
 import org.isoron.uhabits.core.test.HabitFixtures
+import org.isoron.uhabits.core.utils.DateUtils.Companion.getToday
 import org.junit.Assert.assertThrows
 import org.junit.Test
 import org.mockito.kotlin.mock
@@ -184,5 +186,108 @@ class SQLiteHabitListTest : BaseUnitTest() {
         assertThat(record3.position, equalTo(3))
         val record4 = repository.find(4L)!!
         assertThat(record4.position, equalTo(2))
+    }
+
+    @Test
+    fun testGetRoutineCompletionCount_withPartiallyCompletedChildren() {
+        val parent = fixtures.createEmptyHabit()
+        parent.name = "Morning Routine"
+
+        val child1 = fixtures.createEmptyHabit()
+        child1.name = "Brush teeth"
+        child1.parentId = parent.id
+        habitList.update(child1)
+
+        val child2 = fixtures.createEmptyHabit()
+        child2.name = "Exercise"
+        child2.parentId = parent.id
+        habitList.update(child2)
+
+        val child3 = fixtures.createEmptyHabit()
+        child3.name = "Meditate"
+        child3.parentId = parent.id
+        habitList.update(child3)
+
+        val today = getToday()
+
+        child1.originalEntries.add(Entry(today, Entry.YES_MANUAL))
+        child1.recompute()
+        child2.originalEntries.add(Entry(today, Entry.YES_AUTO))
+        child2.recompute()
+        // child3 has no entry (UNKNOWN)
+
+        val result = (habitList as SQLiteHabitList).getRoutineCompletionCount(parent.id!!, today)
+
+        assertThat(result.completedCount, equalTo(2))
+        assertThat(result.totalCount, equalTo(3))
+    }
+
+    @Test
+    fun testGetRoutineCompletionCount_withAllChildrenCompleted() {
+        val parent = fixtures.createEmptyHabit()
+        parent.name = "Evening Routine"
+
+        val child1 = fixtures.createEmptyHabit()
+        child1.name = "Read"
+        child1.parentId = parent.id
+        habitList.update(child1)
+
+        val child2 = fixtures.createEmptyHabit()
+        child2.name = "Journal"
+        child2.parentId = parent.id
+        habitList.update(child2)
+
+        val today = getToday()
+
+        child1.originalEntries.add(Entry(today, Entry.YES_MANUAL))
+        child1.recompute()
+        child2.originalEntries.add(Entry(today, Entry.YES_MANUAL))
+        child2.recompute()
+
+        val result = (habitList as SQLiteHabitList).getRoutineCompletionCount(parent.id!!, today)
+
+        assertThat(result.completedCount, equalTo(2))
+        assertThat(result.totalCount, equalTo(2))
+    }
+
+    @Test
+    fun testGetRoutineCompletionCount_withNoChildrenCompleted() {
+        val parent = fixtures.createEmptyHabit()
+        parent.name = "Weekly Tasks"
+
+        val child1 = fixtures.createEmptyHabit()
+        child1.name = "Laundry"
+        child1.parentId = parent.id
+        habitList.update(child1)
+
+        val child2 = fixtures.createEmptyHabit()
+        child2.name = "Groceries"
+        child2.parentId = parent.id
+        habitList.update(child2)
+
+        val today = getToday()
+
+        child1.originalEntries.add(Entry(today, Entry.NO))
+        child1.recompute()
+        child2.originalEntries.add(Entry(today, Entry.SKIP))
+        child2.recompute()
+
+        val result = (habitList as SQLiteHabitList).getRoutineCompletionCount(parent.id!!, today)
+
+        assertThat(result.completedCount, equalTo(0))
+        assertThat(result.totalCount, equalTo(2))
+    }
+
+    @Test
+    fun testGetRoutineCompletionCount_withNoChildren() {
+        val parent = fixtures.createEmptyHabit()
+        parent.name = "Empty Routine"
+
+        val today = getToday()
+
+        val result = (habitList as SQLiteHabitList).getRoutineCompletionCount(parent.id!!, today)
+
+        assertThat(result.completedCount, equalTo(0))
+        assertThat(result.totalCount, equalTo(0))
     }
 }
