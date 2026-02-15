@@ -20,3 +20,8 @@ usageStats:
 - **Problem solved:** Verifying new model logic without launching Android emulators.
 - **Why this works:** Provides a significantly faster feedback loop than Android Instrumentation tests.
 - **Trade-offs:** Requires strict separation of logic from Android context objects.
+
+#### [Gotcha] Inherited test fixtures typed to interfaces require explicit casting to verify implementation-specific extensions. (2026-02-14)
+- **Situation:** `BaseUnitTest` defines `habitList` as the interface `HabitList`, but `SQLiteHabitListVerificationTest` needed to test `getTopLevelHabits` (specific to `SQLiteHabitList`).
+- **Root cause:** Avoids duplicating complex setup logic from `BaseUnitTest` while still allowing access to the concrete class's new API.
+- **How to avoid:** Reduces type safety in the test suite by relying on runtime casts (`as SQLiteHabitList`).

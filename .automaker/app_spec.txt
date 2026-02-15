@@ -151,6 +151,14 @@
       <name>Positive/Negative Habit Direction Toggle</name>
       <description>Add &apos;direction&apos; field to Habit model (POSITIVE/NEGATIVE enum). Extends habit creation UI with toggle for tracking positive goals (ticks matter) vs negative/avoidance goals (crosses matter). Required for inverted statistics calculations.</description>
     </feature>
+    <feature>
+      <name>Hierarchical Query Methods</name>
+      <description>Extend SQLiteHabitList with methods to retrieve children by parent ID, identify top-level habits (null parent), and validate circular dependency prevention. Includes efficient querying with parent-child relationship caching.</description>
+    </feature>
+    <feature>
+      <name>Parent Habit Progress Aggregation</name>
+      <description>Implement logic to compute routine-level completion count by aggregating child habit entries per day. Returns numeric completion count (completed children) and total count for display in collapsed routine view. Supports weighted averaging and configurable aggregation rules (all/any/majority completion).</description>
+    </feature>
   </implemented_features>
 
   <additional_requirements>

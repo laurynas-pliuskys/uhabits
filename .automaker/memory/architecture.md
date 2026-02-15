@@ -20,3 +20,9 @@ usageStats:
 - **Problem solved:** Persisting domain objects to SQLite.
 - **Why this works:** Decouples the rich domain model (behaviors, complex types) from the flat database representation.
 - **Trade-offs:** Increases boilerplate (manual field copying) but prevents database schema details from leaking into domain logic.
+
+### Circular dependency validation enforced at the Repository/List level, not the Domain Model. (2026-02-14)
+- **Context:** Preventing cycles (A->B->A) or self-parenting in the habit hierarchy.
+- **Why:** Validation requires access to the entire collection to trace ancestry, which individual `Habit` entities (anemic models) do not possess.
+- **Rejected:** Database constraints (insufficient for recursive checks) or Domain Service (added unnecessary indirection for this scope).
+- **Trade-offs:** Couples validation logic to the specific list implementation.
