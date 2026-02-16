@@ -111,7 +111,7 @@ class RoutineCardView(
             typeface = getFontAwesome()
             textSize = 15f
             gravity = Gravity.CENTER
-            
+
             val size = dp(15f).toInt()
             val margin = dp(8f).toInt()
             layoutParams = LinearLayout.LayoutParams(size, size).apply {
@@ -153,7 +153,7 @@ class RoutineCardView(
         val margin = dp(3f).toInt()
         setPadding(margin, 0, margin, margin)
         addView(innerFrame)
-        
+
         updateBackground(false)
         updateChevron()
     }
@@ -186,15 +186,15 @@ class RoutineCardView(
         label.setTextColor(c)
         chevron.setTextColor(c)
         completionPanel.color = c
-        
+
         updateLabel()
     }
-    
+
     private fun updateLabel() {
         val name = habit?.name ?: ""
         label.text = "$name ($totalChildren)"
     }
-    
+
     private fun updateChevron() {
         chevron.text = if (isExpanded) {
             resources.getString(R.string.fa_chevron_down)

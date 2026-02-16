@@ -69,7 +69,7 @@ class HabitCardListView(
             field = value
             attachedHolders
                 .map { it.itemView }
-                .forEach { 
+                .forEach {
                     if (it is HabitCardView) it.dataOffset = value
                     if (it is RoutineCardView) it.dataOffset = value
                 }
@@ -148,7 +148,7 @@ class HabitCardListView(
     fun detachRoutineCardView(holder: RoutineCardViewHolder) {
         attachedHolders.remove(holder)
     }
-    
+
     fun createHabitCardView(): HabitCardView {
         return cardViewFactory.create()
     }

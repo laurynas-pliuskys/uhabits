@@ -441,12 +441,12 @@ class EditHabitActivity : AppCompatActivity(), CommandRunner.Listener {
     private fun showRoutinePicker() {
         val component = (application as HabitsApplication).component
         val routines = component.habitList.filter { it.isParentRoutine }.sortedBy { it.position }
-        
+
         val options = mutableListOf<String>()
         options.add(getString(R.string.no_routine))
         routines.forEach { options.add(it.name) }
         options.add(getString(R.string.create_new_routine))
-        
+
         val builder = AlertDialog.Builder(this)
         builder.setItems(options.toTypedArray()) { dialog, which ->
             when (which) {
@@ -485,9 +485,9 @@ class EditHabitActivity : AppCompatActivity(), CommandRunner.Listener {
                 newRoutine.name = name
                 newRoutine.isParentRoutine = true
                 newRoutine.type = HabitType.YES_NO
-                
+
                 pendingRoutineUUID = newRoutine.uuid
-                
+
                 val command = CreateHabitCommand(
                     component.modelFactory,
                     component.habitList,

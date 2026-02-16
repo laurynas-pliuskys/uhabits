@@ -77,7 +77,7 @@ class CompletionCountButtonView(
         } else {
             if (count == 0) 80 else 160
         }
-        
+
         val displayColor = (color and 0x00FFFFFF) or (alpha shl 24)
         textPaint.color = displayColor
 

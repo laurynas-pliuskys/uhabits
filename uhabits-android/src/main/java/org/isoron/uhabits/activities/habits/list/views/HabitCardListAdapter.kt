@@ -51,12 +51,12 @@ class HabitCardListAdapter @Inject constructor(
     MidnightTimer.MidnightListener,
     ListHabitsMenuBehavior.Adapter,
     ListHabitsSelectionMenuBehavior.Adapter {
-    
+
     companion object {
         const val VIEW_TYPE_HABIT = 0
         const val VIEW_TYPE_ROUTINE = 1
     }
-    
+
     val observable: ModelObservable = ModelObservable()
     private var listView: HabitCardListView? = null
     val selected: LinkedList<Habit> = LinkedList()

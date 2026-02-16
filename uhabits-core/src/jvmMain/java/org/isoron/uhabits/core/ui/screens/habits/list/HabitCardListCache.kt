@@ -406,13 +406,17 @@ class HabitCardListCache @Inject constructor(
             }
 
             for (parentId in parentToChildren.keys) {
-                if (isCancelled) return
+                if (isCancelled) {
+                    return
+                }
                 val children = parentToChildren[parentId]!!
                 val counts = IntArray(checkmarkCount)
                 for (child in children) {
                     var i = 0
                     for ((_, value, _) in child.computedEntries.getByInterval(dateFrom, today)) {
-                        if (i >= checkmarkCount) break
+                        if (i >= checkmarkCount) {
+                            break
+                        }
                         if (value == Entry.YES_MANUAL || value == Entry.YES_AUTO) {
                             counts[i]++
                         }
@@ -424,7 +428,9 @@ class HabitCardListCache @Inject constructor(
 
             if (runner != null) runner!!.publishProgress(this, -1)
             for (position in newData.habits.indices) {
-                if (isCancelled) return
+                if (isCancelled) {
+                    return
+                }
                 val habit = newData.habits[position]
                 if (targetId != null && targetId != habit.id) continue
                 newData.scores[habit.id] = habit.scores[today].value
@@ -454,7 +460,11 @@ class HabitCardListCache @Inject constructor(
 
         @Synchronized
         override fun onProgressUpdate(currentPosition: Int) {
-            if (currentPosition < 0) processRemovedHabits() else processPosition(currentPosition)
+            if (currentPosition < 0) {
+                processRemovedHabits()
+            } else {
+                processPosition(currentPosition)
+            }
         }
 
         @Synchronized
@@ -502,29 +512,47 @@ class HabitCardListCache @Inject constructor(
             val newScore = newData.scores[id]!!
             val newCheckmarks = newData.checkmarks[id]!!
             val newNoteIndicators = newData.notes[id]!!
-            
+
             val oldCompletion = data.completionCounts[id]
             val newCompletion = newData.completionCounts[id]
             val oldChildCount = data.childCounts[id]
             val newChildCount = newData.childCounts[id]
 
             var unchanged = true
-            if (oldScore != newScore) unchanged = false
-            if (!Arrays.equals(oldCheckmarks, newCheckmarks)) unchanged = false
-            if (!Arrays.equals(oldNoteIndicators, newNoteIndicators)) unchanged = false
-            if (!Arrays.equals(oldCompletion, newCompletion)) unchanged = false
-            if (oldChildCount != newChildCount) unchanged = false
-            
-            if (unchanged) return
+            if (oldScore != newScore) {
+                unchanged = false
+            }
+            if (!Arrays.equals(oldCheckmarks, newCheckmarks)) {
+                unchanged = false
+            }
+            if (!Arrays.equals(oldNoteIndicators, newNoteIndicators)) {
+                unchanged = false
+            }
+            if (!Arrays.equals(oldCompletion, newCompletion)) {
+                unchanged = false
+            }
+            if (oldChildCount != newChildCount) {
+                unchanged = false
+            }
+
+            if (unchanged) {
+                return
+            }
             data.scores[id] = newScore
             data.checkmarks[id] = newCheckmarks
             data.notes[id] = newNoteIndicators
 
-            if (newCompletion != null) data.completionCounts[id] = newCompletion
-            else data.completionCounts.remove(id)
+            if (newCompletion != null) {
+                data.completionCounts[id] = newCompletion
+            } else {
+                data.completionCounts.remove(id)
+            }
 
-            if (newChildCount != null) data.childCounts[id] = newChildCount
-            else data.childCounts.remove(id)
+            if (newChildCount != null) {
+                data.childCounts[id] = newChildCount
+            } else {
+                data.childCounts.remove(id)
+            }
 
             listener.onItemChanged(position)
         }
@@ -555,7 +583,9 @@ class HabitCardListCache @Inject constructor(
             val after: Set<Long?> = newData.idToHabit.keys
             val removed: MutableSet<Long?> = TreeSet(before)
             removed.removeAll(after)
-            for (id in removed) remove(id!!)
+            for (id in removed) {
+                remove(id!!)
+            }
         }
     }
 
