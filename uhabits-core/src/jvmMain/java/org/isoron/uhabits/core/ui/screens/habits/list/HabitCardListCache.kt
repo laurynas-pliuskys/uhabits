@@ -24,6 +24,7 @@ import org.isoron.uhabits.core.commands.Command
 import org.isoron.uhabits.core.commands.CommandRunner
 import org.isoron.uhabits.core.commands.CreateRepetitionCommand
 import org.isoron.uhabits.core.io.Logging
+import org.isoron.uhabits.core.models.Entry
 import org.isoron.uhabits.core.models.Habit
 import org.isoron.uhabits.core.models.HabitList
 import org.isoron.uhabits.core.models.HabitList.Order
@@ -34,6 +35,7 @@ import org.isoron.uhabits.core.utils.DateUtils.Companion.getTodayWithOffset
 import java.util.ArrayList
 import java.util.Arrays
 import java.util.HashMap
+import java.util.HashSet
 import java.util.LinkedList
 import java.util.TreeSet
 import javax.inject.Inject
@@ -67,6 +69,7 @@ class HabitCardListCache @Inject constructor(
     private val data: CacheData
     private var filteredHabits: HabitList
     private val taskRunner: TaskRunner
+    private val expandedParents: MutableSet<Long> = HashSet()
 
     @Synchronized
     fun cancelTasks() {
@@ -74,8 +77,33 @@ class HabitCardListCache @Inject constructor(
     }
 
     @Synchronized
+    fun toggleExpand(parentId: Long) {
+        if (expandedParents.contains(parentId)) {
+            expandedParents.remove(parentId)
+        } else {
+            expandedParents.add(parentId)
+        }
+        refreshAllHabits()
+    }
+
+    @Synchronized
+    fun isExpanded(parentId: Long): Boolean {
+        return expandedParents.contains(parentId)
+    }
+
+    @Synchronized
     fun getCheckmarks(habitId: Long): IntArray {
         return data.checkmarks[habitId]!!
+    }
+
+    @Synchronized
+    fun getCompletionCounts(habitId: Long): IntArray? {
+        return data.completionCounts[habitId]
+    }
+
+    @Synchronized
+    fun getChildCount(habitId: Long): Int {
+        return data.childCounts[habitId] ?: 0
     }
 
     @Synchronized
@@ -212,8 +240,33 @@ class HabitCardListCache @Inject constructor(
         val idToHabit: HashMap<Long?, Habit> = HashMap()
         val habits: MutableList<Habit>
         val checkmarks: HashMap<Long?, IntArray>
+        val completionCounts: HashMap<Long?, IntArray>
+        val childCounts: HashMap<Long?, Int>
         val scores: HashMap<Long?, Double>
         val notes: HashMap<Long?, Array<String>>
+
+        @Synchronized
+        fun copyCompletionCountsFrom(oldData: CacheData) {
+            val empty = IntArray(checkmarkCount)
+            for (id in idToHabit.keys) {
+                if (oldData.completionCounts.containsKey(id)) {
+                    completionCounts[id] = oldData.completionCounts[id]!!
+                } else {
+                    completionCounts[id] = empty
+                }
+            }
+        }
+
+        @Synchronized
+        fun copyChildCountsFrom(oldData: CacheData) {
+            for (id in idToHabit.keys) {
+                if (oldData.childCounts.containsKey(id)) {
+                    childCounts[id] = oldData.childCounts[id]!!
+                } else {
+                    childCounts[id] = 0
+                }
+            }
+        }
 
         @Synchronized
         fun copyCheckmarksFrom(oldData: CacheData) {
@@ -255,10 +308,41 @@ class HabitCardListCache @Inject constructor(
 
         @Synchronized
         fun fetchHabits() {
+            val topLevel = ArrayList<Habit>()
+            val childrenMap = HashMap<Long, MutableList<Habit>>()
+            val visibleIds = HashSet<Long>()
+
+            for (h in filteredHabits) {
+                if (h.id != null) visibleIds.add(h.id!!)
+            }
+
             for (h in filteredHabits) {
                 if (h.id == null) continue
-                habits.add(h)
-                idToHabit[h.id] = h
+                val parentId = h.parentId
+
+                if (parentId != null && visibleIds.contains(parentId)) {
+                    childrenMap.getOrPut(parentId!!) { ArrayList() }.add(h)
+                } else {
+                    topLevel.add(h)
+                }
+            }
+
+            for (parent in topLevel) {
+                habits.add(parent)
+                idToHabit[parent.id] = parent
+
+                if (parent.isParentRoutine || childrenMap.containsKey(parent.id)) {
+                    val children = childrenMap[parent.id]
+                    val count = children?.size ?: 0
+                    childCounts[parent.id] = count
+
+                    if (count > 0 && isExpanded(parent.id!!)) {
+                        for (child in children!!) {
+                            habits.add(child)
+                            idToHabit[child.id] = child
+                        }
+                    }
+                }
             }
         }
 
@@ -270,6 +354,8 @@ class HabitCardListCache @Inject constructor(
             checkmarks = HashMap()
             scores = HashMap()
             notes = HashMap()
+            completionCounts = HashMap()
+            childCounts = HashMap()
         }
     }
 
@@ -301,8 +387,41 @@ class HabitCardListCache @Inject constructor(
             newData.copyScoresFrom(data)
             newData.copyCheckmarksFrom(data)
             newData.copyNoteIndicatorsFrom(data)
+            newData.copyCompletionCountsFrom(data)
+            newData.copyChildCountsFrom(data)
+
             val today = getTodayWithOffset()
             val dateFrom = today.minus(checkmarkCount - 1)
+
+            // Calculate completion counts for parents
+            val parentToChildren = HashMap<Long, MutableList<Habit>>()
+            for (h in filteredHabits) {
+                if (h.parentId != null) {
+                    val pid = h.parentId!!
+                    if (!parentToChildren.containsKey(pid)) {
+                        parentToChildren[pid] = ArrayList()
+                    }
+                    parentToChildren[pid]!!.add(h)
+                }
+            }
+
+            for (parentId in parentToChildren.keys) {
+                if (isCancelled) return
+                val children = parentToChildren[parentId]!!
+                val counts = IntArray(checkmarkCount)
+                for (child in children) {
+                    var i = 0
+                    for ((_, value, _) in child.computedEntries.getByInterval(dateFrom, today)) {
+                        if (i >= checkmarkCount) break
+                        if (value == Entry.YES_MANUAL || value == Entry.YES_AUTO) {
+                            counts[i]++
+                        }
+                        i++
+                    }
+                }
+                newData.completionCounts[parentId] = counts
+            }
+
             if (runner != null) runner!!.publishProgress(this, -1)
             for (position in newData.habits.indices) {
                 if (isCancelled) return
@@ -346,6 +465,12 @@ class HabitCardListCache @Inject constructor(
             data.scores[id] = newData.scores[id]!!
             data.checkmarks[id] = newData.checkmarks[id]!!
             data.notes[id] = newData.notes[id]!!
+            if (newData.completionCounts.containsKey(id)) {
+                data.completionCounts[id] = newData.completionCounts[id]!!
+            }
+            if (newData.childCounts.containsKey(id)) {
+                data.childCounts[id] = newData.childCounts[id]!!
+            }
             listener.onItemInserted(position)
         }
 
@@ -377,14 +502,30 @@ class HabitCardListCache @Inject constructor(
             val newScore = newData.scores[id]!!
             val newCheckmarks = newData.checkmarks[id]!!
             val newNoteIndicators = newData.notes[id]!!
+            
+            val oldCompletion = data.completionCounts[id]
+            val newCompletion = newData.completionCounts[id]
+            val oldChildCount = data.childCounts[id]
+            val newChildCount = newData.childCounts[id]
+
             var unchanged = true
             if (oldScore != newScore) unchanged = false
             if (!Arrays.equals(oldCheckmarks, newCheckmarks)) unchanged = false
             if (!Arrays.equals(oldNoteIndicators, newNoteIndicators)) unchanged = false
+            if (!Arrays.equals(oldCompletion, newCompletion)) unchanged = false
+            if (oldChildCount != newChildCount) unchanged = false
+            
             if (unchanged) return
             data.scores[id] = newScore
             data.checkmarks[id] = newCheckmarks
             data.notes[id] = newNoteIndicators
+
+            if (newCompletion != null) data.completionCounts[id] = newCompletion
+            else data.completionCounts.remove(id)
+
+            if (newChildCount != null) data.childCounts[id] = newChildCount
+            else data.childCounts.remove(id)
+
             listener.onItemChanged(position)
         }
 

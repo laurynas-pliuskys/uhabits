@@ -106,7 +106,8 @@
 	<!--<string translatable="false" name="fa_step_forward">&#xf051;</string>-->
 	<!--<string translatable="false" name="fa_eject">&#xf052;</string>-->
 	<!--<string translatable="false" name="fa_chevron_left">&#xf053;</string>-->
-	<!--<string translatable="false" name="fa_chevron_right">&#xf054;</string>-->
+	<string translatable="false" name="fa_chevron_right">&#xf054;</string>
+    <string translatable="false" name="fa_chevron_down">&#xf078;</string>
 	<!--<string translatable="false" name="fa_plus_circle">&#xf055;</string>-->
 	<!--<string translatable="false" name="fa_minus_circle">&#xf056;</string>-->
 	<!--<string translatable="false" name="fa_times_circle">&#xf057;</string>-->

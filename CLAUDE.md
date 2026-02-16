@@ -68,9 +68,13 @@ build.sh           # CI/CD build script
 1. ✅ **Build Check** - `./gradlew assembleDebug` must succeed
 2. ✅ **Unit Tests** - `./gradlew test` must pass
 3. ✅ **Code Style** - `./gradlew ktlintCheck` must pass
-4. ✅ **UI Verification** - For UI changes, use android-tester skill to verify on emulator
+4. ✅ **UI Verification** - **MANDATORY** for all UI category tickets:
+   - Use android-tester skill to verify feature on emulator
+   - Create test data through the UI (not backend) to exercise the feature
+   - Take screenshots demonstrating the feature works as specified
+   - If UI verification reveals missing dependencies (e.g., no UI to create required test data), create a new ticket for the blocker and document the limitation in the current ticket's description
 
-**DO NOT** mark a feature as complete/verified until ALL applicable steps pass.
+**DO NOT** mark a feature as complete/verified or move to waiting_approval until ALL applicable steps pass. For UI tickets, step 4 is NOT optional.
 
 ## Autonomous Verification
 

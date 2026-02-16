@@ -1,0 +1,37 @@
+{
+  "id": "routine-aggregated-progress",
+  "category": "Core",
+  "title": "Parent Habit Progress Aggregation",
+  "description": "Implement logic to compute routine-level completion count by aggregating child habit entries per day using SIMPLE COUNT approach: count how many child habits are completed vs total children (e.g., \"3/5 habits completed\"). Returns numeric completion count (completed children) and total count for display in collapsed routine view. A child habit is considered completed if its entry value is YES_MANUAL or YES_AUTO for the given day...",
+  "status": "pending",
+  "priority": 2,
+  "complexity": "complex",
+  "dependencies": [
+    "hierarchy-repository-methods"
+  ],
+  "createdAt": "2026-02-13T21:54:22.576Z",
+  "updatedAt": "2026-02-15T10:48:41.053Z",
+  "descriptionHistory": [
+    {
+      "description": "Implement logic to compute routine-level completion count by aggregating child habit entries per day. Returns numeric completion count (completed children) and total count for display in collapsed routine view. Supports weighted averaging and configurable aggregation rules (all/any/majority completion).",
+      "timestamp": "2026-02-14T12:13:51.083Z",
+      "source": "edit",
+      "skipTests": true
+    },
+    {
+      "description": "Implement logic to compute routine-level completion count by aggregating child habit entries per day using SIMPLE COUNT approach: count how many child habits are completed vs total children (e.g., \"3/5 habits completed\"). Returns numeric completion count (completed children) and total count for display in collapsed routine view. A child habit is considered completed if its entry value is YES_MANUAL or YES_AUTO for the given day...",
+      "timestamp": "2026-02-15T11:55:05.692Z",
+      "source": "edit"
+    }
+  ],
+  "skipTests": true,
+  "model": "claude-sonnet",
+  "thinkingLevel": "medium",
+  "reasoningEffort": "none",
+  "imagePaths": [],
+  "textFilePaths": [],
+  "branchName": "add-parentId-to-core",
+  "planningMode": "skip",
+  "requirePlanApproval": false,
+  "workMode": "custom"
+}

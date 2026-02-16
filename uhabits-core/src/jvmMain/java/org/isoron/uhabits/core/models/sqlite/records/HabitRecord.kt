@@ -47,6 +47,9 @@ class HabitRecord {
     @field:Column(name = "parent_id")
     var parentId: Long? = null
 
+    @field:Column(name = "is_parent")
+    var isParent: Int? = null
+
     @field:Column(name = "freq_num")
     var freqNum: Int? = null
 
@@ -99,6 +102,7 @@ class HabitRecord {
         id = model.id
         name = model.name
         parentId = model.parentId
+        isParent = if (model.isParentRoutine) 1 else 0
         description = model.description
         highlight = 0
         color = model.color.paletteIndex
@@ -129,6 +133,7 @@ class HabitRecord {
         habit.id = id
         habit.name = name!!
         habit.parentId = parentId
+        habit.isParentRoutine = (isParent ?: 0) != 0
         habit.description = description!!
         habit.question = question!!
         habit.frequency = Frequency(freqNum!!, freqDen!!)

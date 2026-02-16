@@ -159,6 +159,14 @@
       <name>Parent Habit Progress Aggregation</name>
       <description>Implement logic to compute routine-level completion count by aggregating child habit entries per day. Returns numeric completion count (completed children) and total count for display in collapsed routine view. Supports weighted averaging and configurable aggregation rules (all/any/majority completion).</description>
     </feature>
+    <feature>
+      <name>Hierarchical CSV Export Format</name>
+      <description>Extend CSV export functionality to include parent_id and direction columns, preserving parent-child relationships and habit tracking direction. Maintains backward compatibility with flat export format for non-hierarchical data.</description>
+    </feature>
+    <feature>
+      <name>Parent Habit Creation UI</name>
+      <description>Add UI controls to habit creation and edit flows to enable creating parent-child habit relationships. When creating a habit there should be an additional field to pick an existing &quot;Parent Routine&quot; or enter a name for creating a new one. Without this UI, the RoutineCardView cannot be tested or used, as there&apos;s no way to create the parent-child relationships it displays. Please remove the current implementation on the branch that added a third option when creating a habit (yes/no or habit with a measurement) - check what are the uncommitted changes and feel free to remove the redundant changes to implement the extra field instead. </description>
+    </feature>
   </implemented_features>
 
   <additional_requirements>
