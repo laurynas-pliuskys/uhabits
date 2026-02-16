@@ -46,11 +46,17 @@ class HabitCardListAdapter @Inject constructor(
     private val cache: HabitCardListCache,
     private val preferences: Preferences,
     private val midnightTimer: MidnightTimer
-) : RecyclerView.Adapter<HabitCardViewHolder?>(),
+) : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
     HabitCardListCache.Listener,
     MidnightTimer.MidnightListener,
     ListHabitsMenuBehavior.Adapter,
     ListHabitsSelectionMenuBehavior.Adapter {
+    
+    companion object {
+        const val VIEW_TYPE_HABIT = 0
+        const val VIEW_TYPE_ROUTINE = 1
+    }
+    
     val observable: ModelObservable = ModelObservable()
     private var listView: HabitCardListView? = null
     val selected: LinkedList<Habit> = LinkedList()
@@ -100,6 +106,15 @@ class HabitCardListAdapter @Inject constructor(
         return getItem(position)!!.id!!
     }
 
+    override fun getItemViewType(position: Int): Int {
+        val habit = getItem(position)
+        return if (habit != null && habit.isParentRoutine) {
+            VIEW_TYPE_ROUTINE
+        } else {
+            VIEW_TYPE_HABIT
+        }
+    }
+
     /**
      * Returns whether list of selected items is empty.
      *
@@ -119,32 +134,53 @@ class HabitCardListAdapter @Inject constructor(
     }
 
     override fun onBindViewHolder(
-        holder: HabitCardViewHolder,
+        holder: RecyclerView.ViewHolder,
         position: Int
     ) {
         if (listView == null) return
         val habit = cache.getHabitByPosition(position)
-        val score = cache.getScore(habit!!.id!!)
-        val checkmarks = cache.getCheckmarks(habit.id!!)
-        val notes = cache.getNotes(habit.id!!)
         val selected = selected.contains(habit)
-        listView!!.bindCardView(holder, habit, score, checkmarks, notes, selected)
+
+        if (holder is RoutineCardViewHolder) {
+            val completionCounts = cache.getCompletionCounts(habit!!.id!!)
+            val childCount = cache.getChildCount(habit.id!!)
+            val isExpanded = cache.isExpanded(habit.id!!)
+            listView!!.bindRoutineCardView(holder, habit, completionCounts, childCount, isExpanded, selected)
+        } else if (holder is HabitCardViewHolder) {
+            val score = cache.getScore(habit!!.id!!)
+            val checkmarks = cache.getCheckmarks(habit.id!!)
+            val notes = cache.getNotes(habit.id!!)
+            listView!!.bindCardView(holder, habit, score, checkmarks, notes, selected)
+        }
     }
 
-    override fun onViewAttachedToWindow(holder: HabitCardViewHolder) {
-        listView!!.attachCardView(holder)
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
+        if (holder is HabitCardViewHolder) {
+            listView!!.attachCardView(holder)
+        } else if (holder is RoutineCardViewHolder) {
+            listView!!.attachRoutineCardView(holder)
+        }
     }
 
-    override fun onViewDetachedFromWindow(holder: HabitCardViewHolder) {
-        listView!!.detachCardView(holder)
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        if (holder is HabitCardViewHolder) {
+            listView!!.detachCardView(holder)
+        } else if (holder is RoutineCardViewHolder) {
+            listView!!.detachRoutineCardView(holder)
+        }
     }
 
     override fun onCreateViewHolder(
         parent: ViewGroup,
         viewType: Int
-    ): HabitCardViewHolder {
-        val view = listView!!.createHabitCardView()
-        return HabitCardViewHolder(view)
+    ): RecyclerView.ViewHolder {
+        return if (viewType == VIEW_TYPE_ROUTINE) {
+            val view = listView!!.createRoutineCardView()
+            RoutineCardViewHolder(view)
+        } else {
+            val view = listView!!.createHabitCardView()
+            HabitCardViewHolder(view)
+        }
     }
 
     /**

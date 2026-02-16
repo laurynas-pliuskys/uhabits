@@ -36,7 +36,8 @@ import javax.inject.Inject
 class HabitCardListController @Inject constructor(
     private val adapter: HabitCardListAdapter,
     private val behavior: ListHabitsBehavior,
-    private val selectionMenu: Lazy<ListHabitsSelectionMenu>
+    private val selectionMenu: Lazy<ListHabitsSelectionMenu>,
+    private val cache: org.isoron.uhabits.core.ui.screens.habits.list.HabitCardListCache
 ) : HabitCardListView.Controller, ModelObservable.Listener {
 
     private var activeMode: Mode
@@ -115,7 +116,11 @@ class HabitCardListController @Inject constructor(
     internal inner class NormalMode : Mode {
         override fun onItemClick(position: Int) {
             val habit = adapter.getItem(position) ?: return
-            behavior.onClickHabit(habit)
+            if (habit.isParentRoutine) {
+                cache.toggleExpand(habit.id!!)
+            } else {
+                behavior.onClickHabit(habit)
+            }
         }
 
         override fun onItemLongClick(position: Int): Boolean {

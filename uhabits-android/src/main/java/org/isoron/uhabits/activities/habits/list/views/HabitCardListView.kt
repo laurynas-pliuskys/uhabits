@@ -47,15 +47,17 @@ class HabitCardListViewFactory
     @ActivityContext val context: Context,
     val adapter: HabitCardListAdapter,
     val cardViewFactory: HabitCardViewFactory,
+    val routineCardViewFactory: RoutineCardViewFactory,
     val controller: Lazy<HabitCardListController>
 ) {
-    fun create() = HabitCardListView(context, adapter, cardViewFactory, controller)
+    fun create() = HabitCardListView(context, adapter, cardViewFactory, routineCardViewFactory, controller)
 }
 
 class HabitCardListView(
     @ActivityContext context: Context,
     private val adapter: HabitCardListAdapter,
     private val cardViewFactory: HabitCardViewFactory,
+    private val routineCardViewFactory: RoutineCardViewFactory,
     private val controller: Lazy<HabitCardListController>
 ) : RecyclerView(context, null, R.attr.scrollableRecyclerViewStyle) {
 
@@ -66,11 +68,14 @@ class HabitCardListView(
         set(value) {
             field = value
             attachedHolders
-                .map { it.itemView as HabitCardView }
-                .forEach { it.dataOffset = value }
+                .map { it.itemView }
+                .forEach { 
+                    if (it is HabitCardView) it.dataOffset = value
+                    if (it is RoutineCardView) it.dataOffset = value
+                }
         }
 
-    private val attachedHolders = mutableListOf<HabitCardViewHolder>()
+    private val attachedHolders = mutableListOf<RecyclerView.ViewHolder>()
     private val touchHelper = ItemTouchHelper(TouchHelperCallback()).apply {
         attachToRecyclerView(this@HabitCardListView)
     }
@@ -105,6 +110,45 @@ class HabitCardListView(
         }
     }
 
+    fun createRoutineCardView(): RoutineCardView {
+        return routineCardViewFactory.create()
+    }
+
+    fun bindRoutineCardView(
+        holder: RoutineCardViewHolder,
+        habit: Habit,
+        completionCounts: IntArray?,
+        totalChildren: Int,
+        isExpanded: Boolean,
+        selected: Boolean
+    ): View {
+        val cardView = holder.itemView as RoutineCardView
+        cardView.habit = habit
+        cardView.isSelected = selected
+        cardView.buttonCount = checkmarkCount
+        cardView.dataOffset = dataOffset
+        cardView.completionCounts = completionCounts
+        cardView.totalChildren = totalChildren
+        cardView.isExpanded = isExpanded
+
+        val detector = GestureDetector(context, CardViewGestureDetector(holder))
+        cardView.setOnTouchListener { _, ev ->
+            detector.onTouchEvent(ev)
+            true
+        }
+
+        return cardView
+    }
+
+    fun attachRoutineCardView(holder: RoutineCardViewHolder) {
+        (holder.itemView as RoutineCardView).dataOffset = dataOffset
+        attachedHolders.add(holder)
+    }
+
+    fun detachRoutineCardView(holder: RoutineCardViewHolder) {
+        attachedHolders.remove(holder)
+    }
+    
     fun createHabitCardView(): HabitCardView {
         return cardViewFactory.create()
     }
@@ -181,7 +225,7 @@ class HabitCardListView(
     }
 
     private inner class CardViewGestureDetector(
-        private val holder: HabitCardViewHolder
+        private val holder: RecyclerView.ViewHolder
     ) : GestureDetector.SimpleOnGestureListener() {
 
         override fun onLongPress(e: MotionEvent) {
