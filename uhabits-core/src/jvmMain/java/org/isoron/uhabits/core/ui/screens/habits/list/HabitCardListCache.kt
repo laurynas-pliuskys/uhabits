@@ -83,6 +83,8 @@ class HabitCardListCache @Inject constructor(
         } else {
             expandedParents.add(parentId)
         }
+        val position = data.habits.indexOfFirst { it.id == parentId }
+        if (position >= 0) listener.onItemChanged(position)
         refreshAllHabits()
     }
 

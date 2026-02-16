@@ -264,6 +264,10 @@ class HabitCardView(
     }
 
     private fun copyAttributesFrom(h: Habit) {
+        val basePadding = dp(3f).toInt()
+        val indent = if (h.parentId != null) dp(16f).toInt() else 0
+        setPadding(basePadding + indent, 0, basePadding, basePadding)
+
         fun getActiveColor(habit: Habit): Int {
             return when (habit.isArchived) {
                 true -> sres.getColor(R.attr.contrast60)
