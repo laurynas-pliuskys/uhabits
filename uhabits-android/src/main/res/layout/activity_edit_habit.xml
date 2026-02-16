@@ -157,6 +157,23 @@
                 </LinearLayout>
             </FrameLayout>
 
+            <!-- Part of Routine -->
+            <FrameLayout
+                android:id="@+id/routineOuterBox"
+                style="@style/FormOuterBox">
+                <LinearLayout style="@style/FormInnerBox">
+                    <TextView
+                        style="@style/FormLabel"
+                        android:text="@string/part_of_routine" />
+                    <TextView
+                        style="@style/FormDropdown"
+                        android:id="@+id/routinePicker"
+                        android:text="@string/no_routine"
+                        android:textColor="?attr/contrast100"
+                        />
+                </LinearLayout>
+            </FrameLayout>
+
             <!-- Frequency -->
             <FrameLayout
                 android:id="@+id/frequencyOuterBox"

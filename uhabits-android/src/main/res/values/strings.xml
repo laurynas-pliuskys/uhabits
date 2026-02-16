@@ -240,4 +240,8 @@
     <string name="pref_midnight_delay_description">Wait until 3:00 AM to show a new day. Useful if you typically go to sleep after midnight. Requires app restart.</string>
     <string name="pref_animations_title">Disable animations</string>
     <string name="pref_animations_description">Disable confetti animation after adding a checkmark.</string>
+    <string name="part_of_routine">Part of Routine</string>
+    <string name="no_routine">None</string>
+    <string name="create_new_routine">Create new…</string>
+    <string name="new_routine_name">Routine name</string>
 </resources>

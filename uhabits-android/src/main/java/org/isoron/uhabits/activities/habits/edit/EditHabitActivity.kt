@@ -41,6 +41,7 @@ import org.isoron.uhabits.activities.AndroidThemeSwitcher
 import org.isoron.uhabits.activities.common.dialogs.ColorPickerDialogFactory
 import org.isoron.uhabits.activities.common.dialogs.FrequencyPickerDialog
 import org.isoron.uhabits.activities.common.dialogs.WeekdayPickerDialog
+import org.isoron.uhabits.core.commands.Command
 import org.isoron.uhabits.core.commands.CommandRunner
 import org.isoron.uhabits.core.commands.CreateHabitCommand
 import org.isoron.uhabits.core.commands.EditHabitCommand
@@ -69,7 +70,7 @@ fun formatFrequency(freqNum: Int, freqDen: Int, resources: Resources) = when {
     else -> resources.getString(R.string.x_times_per_y_days, freqNum, freqDen)
 }
 
-class EditHabitActivity : AppCompatActivity() {
+class EditHabitActivity : AppCompatActivity(), CommandRunner.Listener {
 
     private lateinit var themeSwitcher: AndroidThemeSwitcher
     private lateinit var binding: ActivityEditHabitBinding
@@ -87,11 +88,15 @@ class EditHabitActivity : AppCompatActivity() {
     var reminderDays: WeekdayList = WeekdayList.EVERY_DAY
     var direction: HabitDirection = HabitDirection.POSITIVE
     var targetType = NumericalHabitType.AT_LEAST
+    var selectedParent: Habit? = null
+    var isParentRoutine = false
+    private var pendingRoutineUUID: String? = null
 
     override fun onCreate(state: Bundle?) {
         super.onCreate(state)
 
         val component = (application as HabitsApplication).component
+        commandRunner = component.commandRunner
         themeSwitcher = AndroidThemeSwitcher(this, component.preferences)
         themeSwitcher.apply()
 
@@ -105,6 +110,7 @@ class EditHabitActivity : AppCompatActivity() {
             habitId = intent.getLongExtra("habitId", -1)
             val habit = component.habitList.getById(habitId)!!
             habitType = habit.type
+            isParentRoutine = habit.isParentRoutine
             color = habit.color
             freqNum = habit.frequency.numerator
             freqDen = habit.frequency.denominator
@@ -114,6 +120,9 @@ class EditHabitActivity : AppCompatActivity() {
                 reminderHour = it.hour
                 reminderMin = it.minute
                 reminderDays = it.days
+            }
+            if (habit.parentId != null) {
+                selectedParent = component.habitList.getById(habit.parentId!!)
             }
             binding.nameInput.setText(habit.name)
             binding.questionInput.setText(habit.question)
@@ -127,6 +136,7 @@ class EditHabitActivity : AppCompatActivity() {
         if (state != null) {
             habitId = state.getLong("habitId")
             habitType = HabitType.fromInt(state.getInt("habitType"))
+            isParentRoutine = state.getBoolean("isParentRoutine")
             color = PaletteColor(state.getInt("paletteColor"))
             freqNum = state.getInt("freqNum")
             freqDen = state.getInt("freqDen")
@@ -134,20 +144,34 @@ class EditHabitActivity : AppCompatActivity() {
             reminderMin = state.getInt("reminderMin")
             reminderDays = WeekdayList(state.getInt("reminderDays"))
             direction = HabitDirection.fromInt(state.getInt("direction"))
+            val parentId = state.getLong("parentId", -1)
+            if (parentId != -1L) {
+                selectedParent = component.habitList.getById(parentId)
+            }
         }
 
         updateColors()
 
-        when (habitType) {
-            HabitType.YES_NO -> {
-                binding.unitOuterBox.visibility = View.GONE
-                binding.targetOuterBox.visibility = View.GONE
-                binding.targetTypeOuterBox.visibility = View.GONE
-            }
-            HabitType.NUMERICAL -> {
-                binding.nameInput.hint = getString(R.string.measurable_short_example)
-                binding.questionInput.hint = getString(R.string.measurable_question_example)
-                binding.frequencyOuterBox.visibility = View.GONE
+        if (isParentRoutine) {
+            binding.frequencyOuterBox.visibility = View.GONE
+            binding.directionOuterBox.visibility = View.GONE
+            binding.targetOuterBox.visibility = View.GONE
+            binding.unitOuterBox.visibility = View.GONE
+            binding.targetTypeOuterBox.visibility = View.GONE
+            binding.routineOuterBox.visibility = View.GONE
+            binding.nameInput.hint = getString(R.string.new_routine_name)
+        } else {
+            when (habitType) {
+                HabitType.YES_NO -> {
+                    binding.unitOuterBox.visibility = View.GONE
+                    binding.targetOuterBox.visibility = View.GONE
+                    binding.targetTypeOuterBox.visibility = View.GONE
+                }
+                HabitType.NUMERICAL -> {
+                    binding.nameInput.hint = getString(R.string.measurable_short_example)
+                    binding.questionInput.hint = getString(R.string.measurable_question_example)
+                    binding.frequencyOuterBox.visibility = View.GONE
+                }
             }
         }
 
@@ -179,6 +203,11 @@ class EditHabitActivity : AppCompatActivity() {
             }
             val dialog = builder.create()
             dialog.dismissCurrentAndShow()
+        }
+
+        populateRoutine()
+        binding.routinePicker.setOnClickListener {
+            showRoutinePicker()
         }
 
         populateFrequency()
@@ -277,6 +306,28 @@ class EditHabitActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart() {
+        super.onStart()
+        commandRunner.addListener(this)
+    }
+
+    override fun onStop() {
+        commandRunner.removeListener(this)
+        super.onStop()
+    }
+
+    override fun onCommandFinished(command: Command) {
+        if (pendingRoutineUUID != null && command is CreateHabitCommand) {
+            val component = (application as HabitsApplication).component
+            val created = component.habitList.getByUUID(pendingRoutineUUID!!)
+            if (created != null) {
+                selectedParent = created
+                pendingRoutineUUID = null
+                populateRoutine()
+            }
+        }
+    }
+
     private fun save() {
         val component = (application as HabitsApplication).component
         val habit = component.modelFactory.buildHabit()
@@ -292,6 +343,8 @@ class EditHabitActivity : AppCompatActivity() {
         habit.description = binding.notesInput.text.trim().toString()
         habit.color = color
         habit.direction = direction
+        habit.parentId = selectedParent?.id
+        habit.isParentRoutine = isParentRoutine
         if (reminderHour >= 0) {
             habit.reminder = Reminder(reminderHour, reminderMin, reminderDays)
         } else {
@@ -375,6 +428,78 @@ class EditHabitActivity : AppCompatActivity() {
             HabitDirection.POSITIVE -> getString(R.string.habit_direction_positive)
             HabitDirection.NEGATIVE -> getString(R.string.habit_direction_negative)
         }
+    }
+
+    private fun populateRoutine() {
+        if (selectedParent != null) {
+            binding.routinePicker.text = selectedParent!!.name
+        } else {
+            binding.routinePicker.text = getString(R.string.no_routine)
+        }
+    }
+
+    private fun showRoutinePicker() {
+        val component = (application as HabitsApplication).component
+        val routines = component.habitList.filter { it.isParentRoutine }.sortedBy { it.position }
+        
+        val options = mutableListOf<String>()
+        options.add(getString(R.string.no_routine))
+        routines.forEach { options.add(it.name) }
+        options.add(getString(R.string.create_new_routine))
+        
+        val builder = AlertDialog.Builder(this)
+        builder.setItems(options.toTypedArray()) { dialog, which ->
+            when (which) {
+                0 -> {
+                    selectedParent = null
+                    populateRoutine()
+                }
+                options.size - 1 -> {
+                    showCreateRoutineDialog()
+                }
+                else -> {
+                    selectedParent = routines[which - 1]
+                    populateRoutine()
+                }
+            }
+            dialog.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.dismissCurrentAndShow()
+    }
+
+    private fun showCreateRoutineDialog() {
+        val component = (application as HabitsApplication).component
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle(R.string.create_new_routine)
+
+        val input = android.widget.EditText(this)
+        input.hint = getString(R.string.new_routine_name)
+        input.inputType = android.text.InputType.TYPE_CLASS_TEXT or android.text.InputType.TYPE_TEXT_FLAG_CAP_SENTENCES
+        builder.setView(input)
+
+        builder.setPositiveButton(android.R.string.ok) { dialog, _ ->
+            val name = input.text.toString().trim()
+            if (name.isNotEmpty()) {
+                val newRoutine = component.modelFactory.buildHabit()
+                newRoutine.name = name
+                newRoutine.isParentRoutine = true
+                newRoutine.type = HabitType.YES_NO
+                
+                pendingRoutineUUID = newRoutine.uuid
+                
+                val command = CreateHabitCommand(
+                    component.modelFactory,
+                    component.habitList,
+                    newRoutine
+                )
+                component.commandRunner.run(command)
+            }
+            dialog.dismiss()
+        }
+        builder.setNegativeButton(android.R.string.cancel) { dialog, _ -> dialog.cancel() }
+
+        builder.show()
     }
 
     private fun updateColors() {
