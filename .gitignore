@@ -30,4 +30,5 @@ kotlin-js-store
 .automaker/worktrees/
 
 .kotlin/
+.automaker/context/context-metadata.json
 summary_output.txt

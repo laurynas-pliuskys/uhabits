@@ -50,6 +50,7 @@ class HabitTest : BaseUnitTest() {
         model.color = PaletteColor(0)
         model.frequency = Frequency(10, 20)
         model.reminder = Reminder(8, 30, WeekdayList(1))
+        model.direction = HabitDirection.NEGATIVE
         val habit = modelFactory.buildHabit()
         habit.copyFrom(model)
         assertEquals(habit.isArchived, model.isArchived)
@@ -57,6 +58,7 @@ class HabitTest : BaseUnitTest() {
         assertThat(habit.color, `is`(model.color))
         assertThat(habit.frequency, equalTo(model.frequency))
         assertThat(habit.reminder, equalTo(model.reminder))
+        assertThat(habit.direction, equalTo(HabitDirection.NEGATIVE))
     }
 
     @Test
