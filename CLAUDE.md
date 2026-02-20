@@ -25,6 +25,7 @@ Full spec: `.automaker/app_spec.txt`
 | Hierarchical RecyclerView adapter | Multi-type adapter for routine headers vs child items |
 | Hierarchical CSV export | parent_id + direction in export |
 | Flexible Habit Label Position | Settings option to move habit/routine labels to the right side |
+| Trinary Checkmark Rendering | Red/Green indicators for pass/fail when missing data enabled |
 
 ## Backlog Features
 
@@ -33,7 +34,6 @@ Full spec: `.automaker/app_spec.txt`
 | ID | Title | Description | Complexity | Use Case |
 |----|-------|-------------|------------|----------|
 | trinary-entry-states | Trinary State System | Success/Failure/Unknown states | Medium | - |
-| trinary-checkmark-rendering | Trinary Checkmark Button Graphics | UI updates for trinary states | Medium | - |
 | stint-data-model | Stint Duration Data Structure | - | - | - |
 | gap-analyzer-core | Interval Gap Analysis Engine | - | - | - |
 | sma-calculator | Simple Moving Average Calculator | - | - | - |
