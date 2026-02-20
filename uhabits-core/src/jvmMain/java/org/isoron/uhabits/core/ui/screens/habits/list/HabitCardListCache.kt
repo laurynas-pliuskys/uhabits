@@ -390,7 +390,6 @@ class HabitCardListCache @Inject constructor(
             newData.copyCheckmarksFrom(data)
             newData.copyNoteIndicatorsFrom(data)
             newData.copyCompletionCountsFrom(data)
-            newData.copyChildCountsFrom(data)
 
             val today = getTodayWithOffset()
             val dateFrom = today.minus(checkmarkCount - 1)
