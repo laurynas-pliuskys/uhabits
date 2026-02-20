@@ -134,7 +134,9 @@ class CheckmarkButtonView(
         private val rect = RectF()
         private val bgColor = sres.getColor(R.attr.cardBgColor)
         private val lowContrastColor = sres.getColor(R.attr.contrast40)
-        private val mediumContrastColor = sres.getColor(R.attr.contrast60)
+        private val palette = sres.getPalette()
+        private val redColor = palette[0]
+        private val greenColor = palette[7]
         private val pNotesIndicator = Paint()
 
         private val paint = TextPaint().apply {
@@ -145,10 +147,17 @@ class CheckmarkButtonView(
 
         fun draw(canvas: Canvas) {
             paint.color = when (value) {
-                YES_MANUAL, YES_AUTO, SKIP -> color
+                YES_MANUAL, YES_AUTO -> {
+                    if (preferences.areQuestionMarksEnabled) {
+                        greenColor
+                    } else {
+                        color
+                    }
+                }
+                SKIP -> color
                 NO -> {
                     if (preferences.areQuestionMarksEnabled) {
-                        mediumContrastColor
+                        redColor
                     } else {
                         lowContrastColor
                     }
