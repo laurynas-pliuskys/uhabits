@@ -167,7 +167,13 @@ class HabitCardListCache @Inject constructor(
     @Synchronized
     override fun onCommandFinished(command: Command) {
         if (command is CreateRepetitionCommand) {
-            command.habit.id?.let { refreshHabit(it) }
+            command.habit.id?.let {
+                refreshHabit(it)
+                val cachedHabit = data.idToHabit[it]
+                if (cachedHabit?.parentId != null) {
+                    refreshHabit(cachedHabit.parentId!!)
+                }
+            }
         } else {
             refreshAllHabits()
         }

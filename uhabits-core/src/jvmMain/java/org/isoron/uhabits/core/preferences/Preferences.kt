@@ -176,6 +176,13 @@ open class Preferences(private val storage: Storage) {
             for (l in listeners) l.onCheckmarkSequenceChanged()
         }
 
+    open var isHabitLabelOnRightSide: Boolean
+        get() = storage.getBoolean("pref_habit_label_right_side", false)
+        set(value) {
+            storage.putBoolean("pref_habit_label_right_side", value)
+            for (l in listeners) l.onLayoutDirectionChanged()
+        }
+
     open var isMidnightDelayEnabled: Boolean
         get() = storage.getBoolean("pref_midnight_delay", false)
         set(enabled) {
@@ -241,6 +248,7 @@ open class Preferences(private val storage: Storage) {
 
     interface Listener {
         fun onCheckmarkSequenceChanged() {}
+        fun onLayoutDirectionChanged() {}
         fun onNotificationsChanged() {}
         fun onQuestionMarksChanged() {}
     }

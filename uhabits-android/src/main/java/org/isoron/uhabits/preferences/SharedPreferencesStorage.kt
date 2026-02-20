@@ -90,6 +90,8 @@ class SharedPreferencesStorage
                 preferences.isMidnightDelayEnabled = getBoolean(key, false)
             "pref_sticky_notifications" ->
                 preferences.setNotificationsSticky(getBoolean(key, false))
+            "pref_habit_label_right_side" ->
+                preferences.isHabitLabelOnRightSide = getBoolean(key, false)
             "pref_unknown_enabled" -> {
                 preferences.areQuestionMarksEnabled = getBoolean(key, false)
             }

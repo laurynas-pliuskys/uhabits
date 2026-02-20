@@ -1,26 +1,61 @@
 # Claude Code - Project Context
 
-## How This Project Uses Claude Code
+## Project Vision
 
-This project is developed through **automaker-app**, a GUI (Kanban interface) that manages prompts, context, and task orchestration for Claude Code. This is NOT a standard Claude Code setup:
-- Automaker generates prompts/context automatically and invokes Claude Code
-- Claude Code sessions here are primarily for **high-level overviews and exploration**, not direct feature implementation
-- **DO NOT** create config files or documentation unprompted — only create functional scripts that automaker can call
-- Use the **android-tester** skill when an implemented feature needs UI-level verification on the emulator
+Transforming Loop Habit Tracker into a **hierarchical Routine Manager** with gap analysis:
+1. **Hierarchical structure** — parent Routines contain child habit Items
+2. **Expandable accordion UI** — grouped, collapsible RecyclerView with 7-day grid
+3. **Trinary states** — Success / Failure / Unknown (extends binary Yes/No)
+4. **Gap analysis engine** — calculates intervals between state transitions (stints)
+5. **Gap visualization** — bar charts with SMA trend lines in statistics view
 
-## Automaker Tickets
+Full spec: `.automaker/app_spec.txt`
 
-Feature tickets: `.automaker/features/<feature-id>/feature.json` (id, title, description, status, priority, complexity, dependencies)
-- **OK to update:** `description` — refine implementation approach, clarify requirements, add design decisions
-- **DO NOT touch:** `status`, `priority`, `complexity`, `dependencies`, `category` — automaker manages these
-- `.automaker/app_spec.txt` — overall vision + list of already-implemented features
-- Everything in `.automaker/features/` is planned/backlog work, not existing features
+## What's Implemented
 
-## Gotchas
+| Feature | Notes |
+|---------|-------|
+| Hierarchical DB schema | Migration 26.sql — parent_id + direction columns on habits |
+| Habit model parentId | Habit.kt + HabitRecord.kt extended |
+| Direction toggle | POSITIVE/NEGATIVE enum on Habit |
+| Hierarchical query methods | SQLiteHabitList: getChildren(), getTopLevel() |
+| Parent habit aggregation | Routine completion count from child entries |
+| Parent habit creation UI | Inline parent picker in EditHabitActivity |
+| Routine card view | Expandable accordion card (waiting_approval) |
+| Hierarchical RecyclerView adapter | Multi-type adapter for routine headers vs child items |
+| Hierarchical CSV export | parent_id + direction in export |
+| Flexible Habit Label Position | Settings option to move habit/routine labels to the right side |
 
-- Debug APK is unsigned; release requires `LOOP_KEY_*` env vars
-- `lint-baseline.xml` (350KB) exists — lint abortOnError is disabled
-- `build.sh` manages emulator snapshots for fresh-install test state
+## Backlog Features
+
+**Note:** Ignore `.automaker` files. This file (`CLAUDE.md`) is the single source of truth for both Claude Code and Gemini CLI.
+
+| ID | Title | Description | Complexity | Use Case |
+|----|-------|-------------|------------|----------|
+| trinary-entry-states | Trinary State System | Success/Failure/Unknown states | Medium | - |
+| trinary-checkmark-rendering | Trinary Checkmark Button Graphics | UI updates for trinary states | Medium | - |
+| stint-data-model | Stint Duration Data Structure | - | - | - |
+| gap-analyzer-core | Interval Gap Analysis Engine | - | - | - |
+| sma-calculator | Simple Moving Average Calculator | - | - | - |
+| gap-bar-chart | Gap Duration Bar Chart | - | - | - |
+| gap-statistics-card | Gap Analysis Statistics Card | - | - | - |
+| inverted-gap-statistics | Direction-Aware Gap Statistics | - | - | - |
+| gap-comparison-view | Multi-Habit Gap Comparison Chart | - | - | - |
+| gap-notification-alerts | Gap Threshold Notifications | - | - | - |
+| horizontal-scroll-timeline | Horizontal 30-Day Timeline | - | - | - |
+| hierarchy-csv-import | CSV Import with Hierarchy | - | - | - |
+| widget-hierarchy-support | Widget Support for Hierarchical Habits | - | - | - |
+| routine-reordering | Drag-and-Drop Reordering | - | - | - |
+| routine-templates | Pre-defined Routine Templates | - | - | - |
+| configurable-sma-period | Configurable SMA Period Setting | - | - | - |
+| multi-parent-habits | Multi-Parent Habits | Allow a single habit to belong to multiple parent routines (e.g., "Face Wash" in both "Morning" and "Night"). | High (Schema) / Medium (Alias) | **Solution:** likely implement via "Alias" wrapper to avoid M:N schema refactor. |
+
+## Workflow
+
+Use **Claude Code plan mode** to design implementation, then implement:
+1. Explore codebase to understand patterns
+2. Write implementation plan (Claude Code plan mode)
+3. Implement, then verify (build → unit tests → ktlint → UI if needed)
 
 ## Commands
 
@@ -62,47 +97,36 @@ build.sh           # CI/CD build script
 
 ## Verification Requirements
 
-**IMPORTANT:** All features have `skipTests: true` and MUST pass these checks before approval:
+Before marking a feature complete, verify in order:
 
-### Required Verification Steps (in order):
-1. ✅ **Build Check** - `./gradlew assembleDebug` must succeed
-2. ✅ **Unit Tests** - `./gradlew test` must pass
-3. ✅ **Code Style** - `./gradlew ktlintCheck` must pass
-4. ✅ **UI Verification** - **MANDATORY** for all UI category tickets:
-   - Use android-tester skill to verify feature on emulator
-   - Create test data through the UI (not backend) to exercise the feature
-   - Take screenshots demonstrating the feature works as specified
-   - If UI verification reveals missing dependencies (e.g., no UI to create required test data), create a new ticket for the blocker and document the limitation in the current ticket's description
+1. **Build** — `./gradlew assembleDebug` must succeed
+2. **Unit tests** — `./gradlew test` must pass
+3. **Code style** — `./gradlew ktlintCheck` must pass
+4. **UI verification** — for UI changes, use the **android-tester** skill
 
-**DO NOT** mark a feature as complete/verified or move to waiting_approval until ALL applicable steps pass. For UI tickets, step 4 is NOT optional.
-
-## Autonomous Verification
+## Autonomous UI Testing
 
 Use the **android-tester** skill for UI-level verification:
 
 ```bash
 ACT=~/.claude/skills/android-tester/scripts/android-ctl
 
-# 1. Ensure emulator is running
-$ACT ensure
-
-# 2. Build and install
+$ACT ensure          # start emulator if needed
 ./gradlew assembleDebug --quiet
 $ACT install uhabits-android/build/outputs/apk/debug/uhabits-android-debug.apk
 $ACT launch
 sleep 3
-
-# 3. Take screenshot and view hierarchy
 $ACT screenshot /tmp/screen.png
 $ACT view-xml /tmp/view.xml
-
-# 4. Interact (tap, scroll, type, etc.)
 $ACT tap 540 1200
-sleep 2
-
-# 5. Verify result
-$ACT screenshot /tmp/after.png
 ```
+
+## Gotchas
+
+- Debug APK is unsigned; release requires `LOOP_KEY_*` env vars
+- `lint-baseline.xml` (350KB) exists — lint abortOnError is disabled
+- `build.sh` manages emulator snapshots for fresh-install test state
+- **NEVER run `adb shell pm clear`** to fix rendering/black screen issues — it wipes ALL app data including backups, causing irreversible data loss. Use `adb shell am force-stop <pkg>` to kill the process (preserves data), or cold boot the emulator from Android Studio to reset GPU/display state.
 
 ## WSL2 to Android Emulator Setup
 
@@ -127,3 +151,5 @@ $ACT screenshot /tmp/after.png
 | Connection Refused | Check Windows Firewall rule is active |
 | Empty Device List | Cold Boot the emulator from Android Studio |
 | IP Mismatch | Re-check host IP; it may have changed |
+| Black screen / stuck splash | Cold boot emulator (HWUI EGL state corruption); check `adb shell dumpsys SurfaceFlinger --list` for stuck layers |
+| Screenshots show wrong tap coords | Pixel 9 Pro XL screenshots display at ~898x2000 but device is 1344x2992 — multiply displayed coords by 1.5 |

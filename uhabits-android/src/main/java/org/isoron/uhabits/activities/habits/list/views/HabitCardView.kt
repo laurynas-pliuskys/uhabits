@@ -40,6 +40,7 @@ import org.isoron.uhabits.activities.common.views.RingView
 import org.isoron.uhabits.core.models.Habit
 import org.isoron.uhabits.core.models.ModelObservable
 import org.isoron.uhabits.core.models.Timestamp
+import org.isoron.uhabits.core.preferences.Preferences
 import org.isoron.uhabits.core.ui.screens.habits.list.ListHabitsBehavior
 import org.isoron.uhabits.core.utils.DateUtils
 import org.isoron.uhabits.inject.ActivityContext
@@ -53,18 +54,21 @@ class HabitCardViewFactory
     @ActivityContext val context: Context,
     private val checkmarkPanelFactory: CheckmarkPanelViewFactory,
     private val numberPanelFactory: NumberPanelViewFactory,
-    private val behavior: ListHabitsBehavior
+    private val behavior: ListHabitsBehavior,
+    private val preferences: Preferences
 ) {
-    fun create() = HabitCardView(context, checkmarkPanelFactory, numberPanelFactory, behavior)
+    fun create() = HabitCardView(context, checkmarkPanelFactory, numberPanelFactory, behavior, preferences)
 }
 
 class HabitCardView(
     @ActivityContext context: Context,
     checkmarkPanelFactory: CheckmarkPanelViewFactory,
     numberPanelFactory: NumberPanelViewFactory,
-    private val behavior: ListHabitsBehavior
+    private val behavior: ListHabitsBehavior,
+    private val preferences: Preferences
 ) : FrameLayout(context),
-    ModelObservable.Listener {
+    ModelObservable.Listener,
+    Preferences.Listener {
 
     var buttonCount
         get() = checkmarkPanel.buttonCount
@@ -205,6 +209,28 @@ class HabitCardView(
         val margin = dp(3f).toInt()
         setPadding(margin, 0, margin, margin)
         addView(innerFrame)
+        reorderViews()
+    }
+
+    override fun onLayoutDirectionChanged() {
+        reorderViews()
+    }
+
+    private fun reorderViews() {
+        innerFrame.removeAllViews()
+        if (preferences.isHabitLabelOnRightSide) {
+            innerFrame.addView(checkmarkPanel)
+            innerFrame.addView(numberPanel)
+            innerFrame.addView(label)
+            innerFrame.addView(scoreRing)
+            label.gravity = Gravity.START or Gravity.CENTER_VERTICAL
+        } else {
+            innerFrame.addView(scoreRing)
+            innerFrame.addView(label)
+            innerFrame.addView(checkmarkPanel)
+            innerFrame.addView(numberPanel)
+            label.gravity = Gravity.START or Gravity.CENTER_VERTICAL
+        }
     }
 
     override fun onModelChange() {
@@ -256,9 +282,12 @@ class HabitCardView(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         habit?.observable?.addListener(this)
+        preferences.addListener(this)
+        reorderViews()
     }
 
     override fun onDetachedFromWindow() {
+        preferences.removeListener(this)
         habit?.observable?.removeListener(this)
         super.onDetachedFromWindow()
     }
@@ -266,7 +295,14 @@ class HabitCardView(
     private fun copyAttributesFrom(h: Habit) {
         val basePadding = dp(3f).toInt()
         val indent = if (h.parentId != null) dp(16f).toInt() else 0
-        setPadding(basePadding + indent, 0, basePadding, basePadding)
+
+        if (preferences.isHabitLabelOnRightSide) {
+            setPadding(basePadding, 0, basePadding, basePadding)
+            label.setPaddingRelative(indent, 0, 0, 0)
+        } else {
+            setPadding(basePadding + indent, 0, basePadding, basePadding)
+            label.setPaddingRelative(0, 0, 0, 0)
+        }
 
         fun getActiveColor(habit: Habit): Int {
             return when (habit.isArchived) {

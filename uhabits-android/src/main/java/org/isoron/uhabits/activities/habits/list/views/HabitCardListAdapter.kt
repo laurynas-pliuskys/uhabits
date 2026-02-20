@@ -213,6 +213,7 @@ class HabitCardListAdapter @Inject constructor(
 
     override fun onRefreshFinished() {
         observable.notifyListeners()
+        listView?.invalidateItemDecorations()
     }
 
     /**

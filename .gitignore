@@ -32,3 +32,4 @@ kotlin-js-store
 .kotlin/
 .automaker/context/context-metadata.json
 summary_output.txt
+.local

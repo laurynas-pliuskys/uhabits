@@ -70,6 +70,10 @@ class HeaderView(
         postInvalidate()
     }
 
+    override fun onLayoutDirectionChanged() {
+        postInvalidate()
+    }
+
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         updateScrollDirection()
@@ -116,18 +120,28 @@ class HeaderView(
             val width = dim(R.dimen.checkmarkWidth)
             val height = dim(R.dimen.checkmarkHeight)
             val isReversed = prefs.isCheckmarkSequenceReversed
+            val alignLeft = prefs.isHabitLabelOnRightSide
 
             day.add(GregorianCalendar.DAY_OF_MONTH, -dataOffset)
             val em = paint.measureText("m")
 
             repeat(buttonCount) { index ->
                 rect.set(0f, 0f, width, height)
-                rect.offset(canvas.width.toFloat() - dp(3.0f), 0f)
 
-                if (isReversed) {
-                    rect.offset(-(index + 1) * width, 0f)
+                if (alignLeft) {
+                    rect.offset(dp(3.0f), 0f)
+                    if (isReversed) {
+                        rect.offset((buttonCount - 1 - index) * width, 0f)
+                    } else {
+                        rect.offset(index * width, 0f)
+                    }
                 } else {
-                    rect.offset((index - buttonCount) * width, 0f)
+                    rect.offset(canvas.width.toFloat() - dp(3.0f), 0f)
+                    if (isReversed) {
+                        rect.offset(-(index + 1) * width, 0f)
+                    } else {
+                        rect.offset((index - buttonCount) * width, 0f)
+                    }
                 }
 
                 if (isRTL()) {

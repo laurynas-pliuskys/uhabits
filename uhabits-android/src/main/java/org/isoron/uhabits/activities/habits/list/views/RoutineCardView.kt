@@ -44,21 +44,26 @@ import org.isoron.uhabits.utils.getFontAwesome
 import org.isoron.uhabits.utils.sres
 import javax.inject.Inject
 
+import org.isoron.uhabits.core.preferences.Preferences
+
 class RoutineCardViewFactory
 @Inject constructor(
     @ActivityContext val context: Context,
     private val completionPanelFactory: CompletionCountPanelViewFactory,
-    private val behavior: ListHabitsBehavior
+    private val behavior: ListHabitsBehavior,
+    private val preferences: Preferences
 ) {
-    fun create() = RoutineCardView(context, completionPanelFactory, behavior)
+    fun create() = RoutineCardView(context, completionPanelFactory, behavior, preferences)
 }
 
 class RoutineCardView(
     @ActivityContext context: Context,
     completionPanelFactory: CompletionCountPanelViewFactory,
-    private val behavior: ListHabitsBehavior
+    private val behavior: ListHabitsBehavior,
+    private val preferences: Preferences
 ) : FrameLayout(context),
-    ModelObservable.Listener {
+    ModelObservable.Listener,
+    Preferences.Listener {
 
     var buttonCount
         get() = completionPanel.buttonCount
@@ -156,6 +161,26 @@ class RoutineCardView(
 
         updateBackground(false)
         updateChevron()
+        reorderViews()
+    }
+
+    override fun onLayoutDirectionChanged() {
+        reorderViews()
+    }
+
+    private fun reorderViews() {
+        innerFrame.removeAllViews()
+        if (preferences.isHabitLabelOnRightSide) {
+            innerFrame.addView(completionPanel)
+            innerFrame.addView(label)
+            innerFrame.addView(chevron)
+            label.gravity = Gravity.START or Gravity.CENTER_VERTICAL
+        } else {
+            innerFrame.addView(chevron)
+            innerFrame.addView(label)
+            innerFrame.addView(completionPanel)
+            label.gravity = Gravity.START or Gravity.CENTER_VERTICAL
+        }
     }
 
     override fun onModelChange() {
@@ -167,14 +192,28 @@ class RoutineCardView(
     override fun onAttachedToWindow() {
         super.onAttachedToWindow()
         habit?.observable?.addListener(this)
+        preferences.addListener(this)
+        reorderViews()
     }
 
     override fun onDetachedFromWindow() {
+        preferences.removeListener(this)
         habit?.observable?.removeListener(this)
         super.onDetachedFromWindow()
     }
 
     private fun copyAttributesFrom(h: Habit) {
+        val indent = if (h.parentId != null) dp(16f).toInt() else 0
+        val basePadding = dp(3f).toInt()
+
+        if (preferences.isHabitLabelOnRightSide) {
+            setPadding(basePadding, 0, basePadding, basePadding)
+            label.setPaddingRelative(indent, 0, 0, 0)
+        } else {
+            setPadding(basePadding + indent, 0, basePadding, basePadding)
+            label.setPaddingRelative(0, 0, 0, 0)
+        }
+
         fun getActiveColor(habit: Habit): Int {
             return when (habit.isArchived) {
                 true -> sres.getColor(R.attr.contrast60)
