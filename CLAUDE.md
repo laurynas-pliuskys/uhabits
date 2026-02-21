@@ -25,7 +25,7 @@ Full spec: `.automaker/app_spec.txt`
 | Hierarchical RecyclerView adapter | Multi-type adapter for routine headers vs child items |
 | Hierarchical CSV export | parent_id + direction in export |
 | Flexible Habit Label Position | Settings option to move habit/routine labels to the right side |
-| Trinary Checkmark Rendering | Red/Green indicators for pass/fail when missing data enabled |
+| Trinary State System & Rendering | Red/Green indicators for pass/fail when missing data enabled. Success/Failure/Unknown states already exist |
 
 ## Backlog Features
 
@@ -33,7 +33,6 @@ Full spec: `.automaker/app_spec.txt`
 
 | ID | Title | Description | Complexity | Use Case |
 |----|-------|-------------|------------|----------|
-| trinary-entry-states | Trinary State System | Success/Failure/Unknown states | Medium | - |
 | stint-data-model | Stint Duration Data Structure | - | - | - |
 | gap-analyzer-core | Interval Gap Analysis Engine | - | - | - |
 | sma-calculator | Simple Moving Average Calculator | - | - | - |
@@ -42,11 +41,8 @@ Full spec: `.automaker/app_spec.txt`
 | inverted-gap-statistics | Direction-Aware Gap Statistics | - | - | - |
 | gap-comparison-view | Multi-Habit Gap Comparison Chart | - | - | - |
 | gap-notification-alerts | Gap Threshold Notifications | - | - | - |
-| horizontal-scroll-timeline | Horizontal 30-Day Timeline | - | - | - |
 | hierarchy-csv-import | CSV Import with Hierarchy | - | - | - |
 | widget-hierarchy-support | Widget Support for Hierarchical Habits | - | - | - |
-| routine-reordering | Drag-and-Drop Reordering | - | - | - |
-| routine-templates | Pre-defined Routine Templates | - | - | - |
 | configurable-sma-period | Configurable SMA Period Setting | - | - | - |
 | multi-parent-habits | Multi-Parent Habits | Allow a single habit to belong to multiple parent routines (e.g., "Face Wash" in both "Morning" and "Night"). | High (Schema) / Medium (Alias) | **Solution:** likely implement via "Alias" wrapper to avoid M:N schema refactor. |
 
