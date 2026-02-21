@@ -31,9 +31,11 @@ interface ModelFactory {
     fun buildHabit(): Habit {
         val scores = buildScoreList()
         val streaks = buildStreakList()
+        val stints = buildStintList()
         return Habit(
             scores = scores,
             streaks = streaks,
+            stints = stints,
             originalEntries = buildOriginalEntries(),
             computedEntries = buildComputedEntries()
         )
@@ -43,6 +45,7 @@ interface ModelFactory {
     fun buildHabitList(): HabitList
     fun buildScoreList(): ScoreList
     fun buildStreakList(): StreakList
+    fun buildStintList(): StintList
     fun buildHabitListRepository(): Repository<HabitRecord>
     fun buildRepetitionListRepository(): Repository<EntryRecord>
 }

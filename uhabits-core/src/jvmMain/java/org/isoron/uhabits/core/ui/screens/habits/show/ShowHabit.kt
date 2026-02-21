@@ -28,6 +28,8 @@ import org.isoron.uhabits.core.ui.screens.habits.show.views.BarCardPresenter
 import org.isoron.uhabits.core.ui.screens.habits.show.views.BarCardState
 import org.isoron.uhabits.core.ui.screens.habits.show.views.FrequencyCardPresenter
 import org.isoron.uhabits.core.ui.screens.habits.show.views.FrequencyCardState
+import org.isoron.uhabits.core.ui.screens.habits.show.views.GapCardPresenter
+import org.isoron.uhabits.core.ui.screens.habits.show.views.GapCardState
 import org.isoron.uhabits.core.ui.screens.habits.show.views.HistoryCardPresenter
 import org.isoron.uhabits.core.ui.screens.habits.show.views.HistoryCardState
 import org.isoron.uhabits.core.ui.screens.habits.show.views.NotesCardPresenter
@@ -53,6 +55,7 @@ data class ShowHabitState(
     val notes: NotesCardState,
     val target: TargetCardState,
     val streaks: StreakCardState,
+    val gap: GapCardState,
     val scores: ScoreCardState,
     val frequency: FrequencyCardState,
     val history: HistoryCardState,
@@ -113,6 +116,10 @@ class ShowHabitPresenter(
                     theme = theme
                 ),
                 streaks = StreakCartPresenter.buildState(
+                    habit = habit,
+                    theme = theme
+                ),
+                gap = GapCardPresenter.buildState(
                     habit = habit,
                     theme = theme
                 ),

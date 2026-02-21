@@ -42,7 +42,8 @@ data class Habit(
     val computedEntries: EntryList,
     val originalEntries: EntryList,
     val scores: ScoreList,
-    val streaks: StreakList
+    val streaks: StreakList,
+    val stints: StintList
 ) {
     init {
         if (uuid == null) this.uuid = UUID.randomUUID().toString().replace("-", "")
@@ -108,6 +109,10 @@ data class Habit(
             targetValue,
             targetType
         )
+
+        if (!isNumerical) {
+            stints.recompute(computedEntries, from, today, direction)
+        }
     }
 
     fun copyFrom(other: Habit) {

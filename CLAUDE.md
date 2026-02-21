@@ -26,6 +26,7 @@ Full spec: `.automaker/app_spec.txt`
 | Hierarchical CSV export | parent_id + direction in export |
 | Flexible Habit Label Position | Settings option to move habit/routine labels to the right side |
 | Trinary State System & Rendering | Red/Green indicators for pass/fail when missing data enabled. Success/Failure/Unknown states already exist |
+| Gap Analysis Chart | `Stint`/`StintList` data model, `SmaCalculator`, `GapChart` DataView, `GapCardPresenter`, `GapCardView` — shown in ShowHabit for boolean habits only |
 
 ## Backlog Features
 
@@ -33,11 +34,6 @@ Full spec: `.automaker/app_spec.txt`
 
 | ID | Title | Description | Complexity | Use Case |
 |----|-------|-------------|------------|----------|
-| stint-data-model | Stint Duration Data Structure | - | - | - |
-| gap-analyzer-core | Interval Gap Analysis Engine | - | - | - |
-| sma-calculator | Simple Moving Average Calculator | - | - | - |
-| gap-bar-chart | Gap Duration Bar Chart | - | - | - |
-| gap-statistics-card | Gap Analysis Statistics Card | - | - | - |
 | inverted-gap-statistics | Direction-Aware Gap Statistics | - | - | - |
 | gap-comparison-view | Multi-Habit Gap Comparison Chart | - | - | - |
 | gap-notification-alerts | Gap Threshold Notifications | - | - | - |
@@ -98,9 +94,11 @@ Before marking a feature complete, verify in order:
 1. **Build** — `./gradlew assembleDebug` must succeed
 2. **Unit tests** — `./gradlew test` must pass
 3. **Code style** — `./gradlew ktlintCheck` must pass
-4. **UI verification** — for UI changes, use the **android-tester** skill
+4. **UI verification** — for UI changes, use the **android-tester** skill to install and push to emulator, then take a screenshot to verify
 
 ## Autonomous UI Testing
+
+**Always install and push to emulator after any UI code change, then take a screenshot to verify visually.**
 
 Use the **android-tester** skill for UI-level verification:
 

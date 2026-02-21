@@ -49,12 +49,14 @@ class ShowHabitView(context: Context) : FrameLayout(context) {
         binding.notesCard.setState(data.notes)
         binding.targetCard.setState(data.target)
         binding.streakCard.setState(data.streaks)
+        binding.gapCard.setState(data.gap)
         binding.scoreCard.setState(data.scores)
         binding.frequencyCard.setState(data.frequency)
         binding.historyCard.setState(data.history)
         binding.barCard.setState(data.bar)
         if (data.isNumerical) {
             binding.overviewCard.visibility = GONE
+            binding.gapCard.visibility = GONE
         } else {
             binding.targetCard.visibility = GONE
         }

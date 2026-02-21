@@ -23,6 +23,7 @@ import org.isoron.uhabits.core.database.Repository
 import org.isoron.uhabits.core.models.EntryList
 import org.isoron.uhabits.core.models.ModelFactory
 import org.isoron.uhabits.core.models.ScoreList
+import org.isoron.uhabits.core.models.StintList
 import org.isoron.uhabits.core.models.StreakList
 import org.isoron.uhabits.core.models.sqlite.records.EntryRecord
 import org.isoron.uhabits.core.models.sqlite.records.HabitRecord
@@ -40,6 +41,7 @@ class SQLModelFactory
     override fun buildHabitList() = SQLiteHabitList(this)
     override fun buildScoreList() = ScoreList()
     override fun buildStreakList() = StreakList()
+    override fun buildStintList() = StintList()
 
     override fun buildHabitListRepository() =
         Repository(HabitRecord::class.java, database)

@@ -82,6 +82,10 @@
                 android:id="@+id/streakCard"
                 style="@style/Card" />
 
+            <org.isoron.uhabits.activities.habits.show.views.GapCardView
+                android:id="@+id/gapCard"
+                style="@style/Card" />
+
             <org.isoron.uhabits.activities.habits.show.views.FrequencyCardView
                 android:id="@+id/frequencyCard"
                 style="@style/Card" />

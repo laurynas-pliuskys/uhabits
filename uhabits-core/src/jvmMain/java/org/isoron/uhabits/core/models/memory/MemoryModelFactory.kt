@@ -21,6 +21,7 @@ package org.isoron.uhabits.core.models.memory
 import org.isoron.uhabits.core.models.EntryList
 import org.isoron.uhabits.core.models.ModelFactory
 import org.isoron.uhabits.core.models.ScoreList
+import org.isoron.uhabits.core.models.StintList
 import org.isoron.uhabits.core.models.StreakList
 
 class MemoryModelFactory : ModelFactory {
@@ -29,6 +30,7 @@ class MemoryModelFactory : ModelFactory {
     override fun buildHabitList() = MemoryHabitList()
     override fun buildScoreList() = ScoreList()
     override fun buildStreakList() = StreakList()
+    override fun buildStintList() = StintList()
     override fun buildHabitListRepository() = throw NotImplementedError()
     override fun buildRepetitionListRepository() = throw NotImplementedError()
 }
