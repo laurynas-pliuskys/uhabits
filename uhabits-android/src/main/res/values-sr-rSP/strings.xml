@@ -200,7 +200,7 @@
     <string name="measurable_example">нпр. Колико сте километара претрчали данас? Колико сте страница прочитали?</string>
     <string name="x_times_per_week">%d пута недељно</string>
     <string name="x_times_per_month">%d пута месечно</string>
-    <string name="x_times_per_y_days">%d пута у %d дана</string>
+    <string name="x_times_per_y_days" formatted="false">%d пута у %d дана</string>
     <string name="yes_or_no_short_example">нпр. вежбање</string>
     <string name="color">Боја</string>
     <string name="example_target">нпр. 15</string>

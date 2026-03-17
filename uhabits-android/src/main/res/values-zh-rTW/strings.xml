@@ -192,7 +192,7 @@
     <string name="measurable_example">例如：今天你跑了幾英哩？你讀了幾頁書？</string>
     <string name="x_times_per_week">每周 %d 次</string>
     <string name="x_times_per_month">每月 %d 次</string>
-    <string name="x_times_per_y_days">%d 次每 %d 日</string>
+    <string name="x_times_per_y_days" formatted="false">%d 次每 %d 日</string>
     <string name="yes_or_no_short_example">例如：運動</string>
     <string name="color">顏色</string>
     <string name="example_target">例如：15</string>

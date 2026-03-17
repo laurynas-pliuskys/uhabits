@@ -197,7 +197,7 @@
     <string name="measurable_example">mis. Berapa km kamu berlari hari ini? Berapa lembar yang sudah kamu baca?</string>
     <string name="x_times_per_week">%d kali per minggu</string>
     <string name="x_times_per_month">%d kali per bulan</string>
-    <string name="x_times_per_y_days">%d kali dalam %d hari</string>
+    <string name="x_times_per_y_days" formatted="false">%d kali dalam %d hari</string>
     <string name="yes_or_no_short_example">mis. Olahraga</string>
     <string name="color">Warna</string>
     <string name="example_target">mis. 15</string>

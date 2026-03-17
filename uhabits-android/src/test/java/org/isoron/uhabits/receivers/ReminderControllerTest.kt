@@ -18,6 +18,7 @@
  */
 package org.isoron.uhabits.receivers
 
+import android.content.Context
 import org.isoron.uhabits.BaseAndroidJVMTest
 import org.isoron.uhabits.core.models.Habit
 import org.isoron.uhabits.core.models.Timestamp
@@ -34,12 +35,16 @@ class ReminderControllerTest : BaseAndroidJVMTest() {
     private lateinit var reminderScheduler: ReminderScheduler
     private lateinit var notificationTray: NotificationTray
     private lateinit var preferences: Preferences
+    private lateinit var context: Context
+
     override fun setUp() {
         super.setUp()
         reminderScheduler = mock()
         notificationTray = mock()
         preferences = mock()
+        context = mock()
         controller = ReminderController(
+            context,
             reminderScheduler,
             notificationTray,
             preferences

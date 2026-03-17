@@ -194,7 +194,7 @@
     <string name="measurable_example">ഉദാ.  ഇന്ന് നിങ്ങൾ എത്ര മൈൽ ഓടി?  നിങ്ങൾ എത്ര പേജുകൾ വായിച്ചു?</string>
     <string name="x_times_per_week">ആഴ്ചയിൽ %d തവണ</string>
     <string name="x_times_per_month">പ്രതിമാസം %d തവണ</string>
-    <string name="x_times_per_y_days">%d ദിവസത്തിനുള്ളിൽ %d തവണ</string>
+    <string name="x_times_per_y_days" formatted="false">%d ദിവസത്തിനുള്ളിൽ %d തവണ</string>
     <string name="yes_or_no_short_example">ഉദാ.  വ്യായാമം ചെയ്യുക</string>
     <string name="color">നിറം</string>
     <string name="example_target">ഉദാ.  15</string>

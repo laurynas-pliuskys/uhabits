@@ -194,7 +194,7 @@
     <string name="measurable_example">напр. Колко километра пробягахте днес? Колко страници прочетохте?</string>
     <string name="x_times_per_week">%d пъти седмично</string>
     <string name="x_times_per_month">%d пъти месечно</string>
-    <string name="x_times_per_y_days">%d пъти в период от %d дни</string>
+    <string name="x_times_per_y_days" formatted="false">%d пъти в период от %d дни</string>
     <string name="yes_or_no_short_example">напр. Тренировка</string>
     <string name="color">Цвят</string>
     <string name="example_target">напр. 15</string>

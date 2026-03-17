@@ -194,7 +194,7 @@
     <string name="measurable_example">எ. கா. நீங்கள் இன்று எத்தனை மைல்கள் ஓடிநீர்? நீங்கள் எத்தனை பக்கங்கள் படித்தீர்கள்?</string>
     <string name="x_times_per_week">வாரத்திற்கு %d முறை</string>
     <string name="x_times_per_month">மாதத்திற்க்கு %d முறை</string>
-    <string name="x_times_per_y_days">%d காலங்களில் %d நாட்கள்</string>
+    <string name="x_times_per_y_days" formatted="false">%d காலங்களில் %d நாட்கள்</string>
     <string name="yes_or_no_short_example">எ. கா. உடற்பயிற்ச்சி</string>
     <string name="color">நிறம்</string>
     <string name="example_target">எ. கா. 15</string>

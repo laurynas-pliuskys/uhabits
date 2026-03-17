@@ -194,7 +194,7 @@
     <string name="measurable_example">მაგ. დღეს რამდენი კილომეტრი გაირბინე? რამდენი გვერდი წაიკითხე?</string>
     <string name="x_times_per_week">კვირაში %d-ჯერ</string>
     <string name="x_times_per_month">თვეში %d-ჯერ</string>
-    <string name="x_times_per_y_days">%d-ჯერ %d დღის განმავლობაში</string>
+    <string name="x_times_per_y_days" formatted="false">%d-ჯერ %d დღის განმავლობაში</string>
     <string name="yes_or_no_short_example">მაგ. ვარჯიში</string>
     <string name="color">ფერი</string>
     <string name="example_target">მაგ. 15</string>

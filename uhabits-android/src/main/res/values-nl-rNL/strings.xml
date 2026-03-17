@@ -194,7 +194,7 @@
     <string name="measurable_example">bijv. Hoeveel kilometer heb je vandaag gelopen? Hoeveel pagina\'s heb je gelezen?</string>
     <string name="x_times_per_week">%d keer per week</string>
     <string name="x_times_per_month">%d keer per maand</string>
-    <string name="x_times_per_y_days">%d keer in  %d dagen</string>
+    <string name="x_times_per_y_days" formatted="false">%d keer in  %d dagen</string>
     <string name="yes_or_no_short_example">bijv. Sporten</string>
     <string name="color">Kleur</string>
     <string name="example_target">bijv. 15</string>

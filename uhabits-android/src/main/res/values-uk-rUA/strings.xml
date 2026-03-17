@@ -215,7 +215,7 @@
     <string name="measurable_example">напр.: Скільки кілометрів ви сьогодні пробігли? Скільки сторінок прочитали?</string>
     <string name="x_times_per_week">%d разів на тиждень</string>
     <string name="x_times_per_month">%d разів на місяць</string>
-    <string name="x_times_per_y_days">%d разів за %d днів</string>
+    <string name="x_times_per_y_days" formatted="false">%d разів за %d днів</string>
     <string name="yes_or_no_short_example">напр., вправа</string>
     <string name="color">Колір</string>
     <string name="example_target">напр., 15</string>

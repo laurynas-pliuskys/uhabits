@@ -194,7 +194,7 @@
     <string name="measurable_example">مثلاً امروز چند کیلومتر دویدید؟ چند صفحه مطالعه کردید؟</string>
     <string name="x_times_per_week">%d بار در هفته</string>
     <string name="x_times_per_month">%d بار در ماه</string>
-    <string name="x_times_per_y_days">%d بار در هر %d روز</string>
+    <string name="x_times_per_y_days" formatted="false">%d بار در هر %d روز</string>
     <string name="yes_or_no_short_example">مثلاً ورزش کنید</string>
     <string name="color">رنگ</string>
     <string name="example_target">مثلاً 15</string>

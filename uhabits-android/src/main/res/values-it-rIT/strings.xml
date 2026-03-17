@@ -194,7 +194,7 @@
     <string name="measurable_example">es. Quanti chilometri hai percorso oggi? Quante pagine hai letto?</string>
     <string name="x_times_per_week">%d volte a settimana</string>
     <string name="x_times_per_month">%d volte al mese</string>
-    <string name="x_times_per_y_days">%d volte in %d giorni</string>
+    <string name="x_times_per_y_days" formatted="false">%d volte in %d giorni</string>
     <string name="yes_or_no_short_example">ad es. Esercizio</string>
     <string name="color">Colore</string>
     <string name="example_target">ad es. 15</string>

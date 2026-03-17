@@ -26,10 +26,12 @@ import org.isoron.uhabits.core.commands.CreateRepetitionCommand
 import org.isoron.uhabits.core.models.Habit
 import org.isoron.uhabits.core.models.HabitList
 import org.isoron.uhabits.core.models.HabitMatcher
+import org.isoron.uhabits.core.preferences.Preferences
 import org.isoron.uhabits.core.preferences.WidgetPreferences
 import org.isoron.uhabits.core.utils.DateUtils.Companion.applyTimezone
 import org.isoron.uhabits.core.utils.DateUtils.Companion.getLocalTime
 import org.isoron.uhabits.core.utils.DateUtils.Companion.getStartOfDayWithOffset
+import org.isoron.uhabits.core.utils.DateUtils.Companion.getUpcomingTimeInMillis
 import org.isoron.uhabits.core.utils.DateUtils.Companion.removeTimezone
 import java.util.Locale
 import java.util.Objects
@@ -40,7 +42,8 @@ class ReminderScheduler @Inject constructor(
     private val commandRunner: CommandRunner,
     private val habitList: HabitList,
     private val sys: SystemScheduler,
-    private val widgetPreferences: WidgetPreferences
+    private val widgetPreferences: WidgetPreferences,
+    private val preferences: Preferences
 ) : CommandRunner.Listener {
     @Synchronized
     override fun onCommandFinished(command: Command) {
@@ -113,6 +116,14 @@ class ReminderScheduler @Inject constructor(
         sys.log("ReminderScheduler", "Scheduling all alarms")
         val reminderHabits = habitList.getFiltered(HabitMatcher.WITH_ALARM)
         for (habit in reminderHabits) schedule(habit)
+
+        if (preferences.isNightlyBackupEnabled) {
+            val hour = preferences.nightlyBackupTime / 60
+            val minute = preferences.nightlyBackupTime % 60
+            val backupTime = getUpcomingTimeInMillis(hour, minute)
+            sys.log("ReminderScheduler", "Scheduling backup alarm for $hour:$minute")
+            sys.scheduleBackup(backupTime)
+        }
     }
 
     @Synchronized
@@ -145,6 +156,7 @@ class ReminderScheduler @Inject constructor(
             timestamp: Long
         ): SchedulerResult
 
+        fun scheduleBackup(backupTime: Long): SchedulerResult
         fun scheduleWidgetUpdate(updateTime: Long): SchedulerResult?
         fun log(componentName: String, msg: String)
     }

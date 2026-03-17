@@ -194,7 +194,7 @@
     <string name="measurable_example">esim. Montako kilometriä juoksit tänään? Montako sivua luit?</string>
     <string name="x_times_per_week">%d kertaa viikossa</string>
     <string name="x_times_per_month">%d kertaa kuukaudessa</string>
-    <string name="x_times_per_y_days">%d kertaa %d päivässä</string>
+    <string name="x_times_per_y_days" formatted="false">%d kertaa %d päivässä</string>
     <string name="yes_or_no_short_example">Esim. kuntoilu</string>
     <string name="color">Väri</string>
     <string name="example_target">Esim. 15</string>

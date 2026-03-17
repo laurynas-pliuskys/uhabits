@@ -206,7 +206,7 @@
     <string name="measurable_example">np. Ile mil przejechałeś dzisiaj? Ile stron przeczytałeś?</string>
     <string name="x_times_per_week">%d razy w tygodniu</string>
     <string name="x_times_per_month">%d razy w miesiącu</string>
-    <string name="x_times_per_y_days">%d razy w ciągu %d dni</string>
+    <string name="x_times_per_y_days" formatted="false">%d razy w ciągu %d dni</string>
     <string name="yes_or_no_short_example">np. ćwiczenia</string>
     <string name="color">Kolor</string>
     <string name="example_target">np. 15</string>

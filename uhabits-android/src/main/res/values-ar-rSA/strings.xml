@@ -218,7 +218,7 @@
     <string name="measurable_example">مثال، كم ميلاً قطعته اليوم؟ كم عدد الصفحات التي قرأتها؟</string>
     <string name="x_times_per_week">%d مرة في الأسبوع</string>
     <string name="x_times_per_month">%d مرة في الشهر</string>
-    <string name="x_times_per_y_days">%d مرات في %d أيام</string>
+    <string name="x_times_per_y_days" formatted="false">%d مرات في %d أيام</string>
     <string name="yes_or_no_short_example">مثال: التمرين</string>
     <string name="color">اللون</string>
     <string name="example_target">مثال: 15</string>

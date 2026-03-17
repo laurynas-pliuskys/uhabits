@@ -195,7 +195,7 @@
 Combien de pages avez-vous lu ?</string>
     <string name="x_times_per_week">%d fois par semaine</string>
     <string name="x_times_per_month">%d fois par mois</string>
-    <string name="x_times_per_y_days">%d fois en %d jours</string>
+    <string name="x_times_per_y_days" formatted="false">%d fois en %d jours</string>
     <string name="yes_or_no_short_example">Par ex, Entrainement</string>
     <string name="color">Couleur</string>
     <string name="example_target">Par ex, 15</string>

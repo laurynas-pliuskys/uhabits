@@ -28,11 +28,14 @@ import org.isoron.uhabits.core.preferences.Preferences
 import org.isoron.uhabits.core.reminders.ReminderScheduler
 import org.isoron.uhabits.core.ui.NotificationTray
 import org.isoron.uhabits.core.utils.DateUtils.Companion.getUpcomingTimeInMillis
+import org.isoron.uhabits.database.AutoBackup
+import org.isoron.uhabits.inject.AppContext
 import org.isoron.uhabits.notifications.SnoozeDelayPickerActivity
 import javax.inject.Inject
 
 @AppScope
 class ReminderController @Inject constructor(
+    @AppContext private val context: Context,
     private val reminderScheduler: ReminderScheduler,
     private val notificationTray: NotificationTray,
     private val preferences: Preferences
@@ -47,6 +50,11 @@ class ReminderController @Inject constructor(
         reminderTime: Long
     ) {
         notificationTray.show(habit, timestamp, reminderTime)
+        reminderScheduler.scheduleAll()
+    }
+
+    fun onAutoBackup() {
+        AutoBackup(context).run()
         reminderScheduler.scheduleAll()
     }
 

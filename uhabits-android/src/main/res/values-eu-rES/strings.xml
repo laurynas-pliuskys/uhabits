@@ -194,7 +194,7 @@
     <string name="measurable_example">Adib. Zenbat kilometro egin dituzu gaur? Zenbat orrialde irakurri dituzu?</string>
     <string name="x_times_per_week">Astean %d aldiz</string>
     <string name="x_times_per_month">Hilean %d aldiz</string>
-    <string name="x_times_per_y_days">%d aldiz %d egunetan</string>
+    <string name="x_times_per_y_days" formatted="false">%d aldiz %d egunetan</string>
     <string name="yes_or_no_short_example">adib. Ariketa</string>
     <string name="color">Kolorea</string>
     <string name="example_target">adib. 15</string>

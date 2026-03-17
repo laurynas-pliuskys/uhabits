@@ -199,7 +199,7 @@
     <string name="measurable_example">pl. Hány kilométert futottál ma? Hány oldalt olvastál el?</string>
     <string name="x_times_per_week">Heti %d alkalommal</string>
     <string name="x_times_per_month">Havi %d alkalommal</string>
-    <string name="x_times_per_y_days">%d alk. / %d nap</string>
+    <string name="x_times_per_y_days" formatted="false">%d alk. / %d nap</string>
     <string name="yes_or_no_short_example">pl. Edzés</string>
     <string name="color">Szín</string>
     <string name="example_target">pl. 15</string>

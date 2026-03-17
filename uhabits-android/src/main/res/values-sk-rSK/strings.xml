@@ -206,7 +206,7 @@
     <string name="measurable_example">napr. Koľko kilometrov ste dnes nabehali? Koľko strán ste prečítali?</string>
     <string name="x_times_per_week">%d krát týždenne</string>
     <string name="x_times_per_month">%d krát za mesiac</string>
-    <string name="x_times_per_y_days">%d krát za %d dní</string>
+    <string name="x_times_per_y_days" formatted="false">%d krát za %d dní</string>
     <string name="yes_or_no_short_example">napr. Cvičenie</string>
     <string name="color">Farba</string>
     <string name="example_target">napr. 15</string>

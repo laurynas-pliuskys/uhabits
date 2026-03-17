@@ -194,7 +194,7 @@
     <string name="measurable_example">π.χ. Πόσα χιλιόμετρα τρέξατε σήμερα; Πόσες σελίδες διαβάσατε;</string>
     <string name="x_times_per_week">%d φορές την εβδομάδα</string>
     <string name="x_times_per_month">%d φορές το μήνα</string>
-    <string name="x_times_per_y_days">%d φορές σε %d ημέρες</string>
+    <string name="x_times_per_y_days" formatted="false">%d φορές σε %d ημέρες</string>
     <string name="yes_or_no_short_example">π.χ. Σωματική άσκηση</string>
     <string name="color">Χρώμα</string>
     <string name="example_target">π.χ. 15</string>

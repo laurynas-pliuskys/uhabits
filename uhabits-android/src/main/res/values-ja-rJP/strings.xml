@@ -188,7 +188,7 @@
     <string name="measurable_example">例：今日は何キロ走りましたか？何ページ読みましたか？</string>
     <string name="x_times_per_week">1 週間に %d 回</string>
     <string name="x_times_per_month">1 か月に %d 回</string>
-    <string name="x_times_per_y_days">%d 回 %d 日</string>
+    <string name="x_times_per_y_days" formatted="false">%d 回 %d 日</string>
     <string name="yes_or_no_short_example">例：運動</string>
     <string name="color">色</string>
     <string name="example_target">例：15</string>

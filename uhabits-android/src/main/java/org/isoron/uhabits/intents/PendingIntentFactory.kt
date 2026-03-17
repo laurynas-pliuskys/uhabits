@@ -156,6 +156,16 @@ class PendingIntentFactory
             FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT
         )
 
+    fun autoBackup(): PendingIntent =
+        getBroadcast(
+            context,
+            0,
+            Intent(context, ReminderReceiver::class.java).apply {
+                action = ReminderReceiver.ACTION_AUTO_BACKUP
+            },
+            FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT
+        )
+
     fun showNumberPicker(habit: Habit, timestamp: Timestamp): PendingIntent? {
         return getActivity(
             context,

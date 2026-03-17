@@ -173,7 +173,7 @@
     <string name="measurable_example">ex.: Câți kilometri ai alergat astăzi? Câte pagini de carte ai citit?</string>
     <string name="x_times_per_week">%d ori pe săptămână</string>
     <string name="x_times_per_month">%d ori pe lună</string>
-    <string name="x_times_per_y_days">%d ori în %d zile</string>
+    <string name="x_times_per_y_days" formatted="false">%d ori în %d zile</string>
     <string name="yes_or_no_short_example">ex.: Exerciții</string>
     <string name="color">Culoare</string>
     <string name="example_target">ex.: 15</string>

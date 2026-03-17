@@ -190,6 +190,18 @@ open class Preferences(private val storage: Storage) {
             for (l in listeners) l.onCheckmarkSequenceChanged()
         }
 
+    open var isNightlyBackupEnabled: Boolean
+        get() = storage.getBoolean("pref_nightly_backup", false)
+        set(enabled) {
+            storage.putBoolean("pref_nightly_backup", enabled)
+        }
+
+    open var nightlyBackupTime: Int
+        get() = storage.getInt("pref_nightly_backup_time", 120) // Default to 2:00 AM
+        set(time) {
+            storage.putInt("pref_nightly_backup_time", time)
+        }
+
     fun updateLastHint(number: Int, timestamp: Timestamp) {
         storage.putInt("last_hint_number", number)
         storage.putLong("last_hint_timestamp", timestamp.unixTime)

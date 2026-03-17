@@ -148,6 +148,20 @@
                 android:summary="@string/no_public_backup_folder_selected"
                 app:iconSpaceReserved="false" />
 
+        <SwitchPreferenceCompat
+            android:defaultValue="false"
+            android:key="pref_nightly_backup"
+            android:title="@string/pref_nightly_backup_title"
+            android:summary="@string/pref_nightly_backup_summary"
+            app:iconSpaceReserved="false" />
+
+        <Preference
+            android:key="pref_nightly_backup_time"
+            android:title="@string/pref_nightly_backup_time_title"
+            android:summary="2:00 AM"
+            android:dependency="pref_nightly_backup"
+            app:iconSpaceReserved="false" />
+
     </PreferenceCategory>
 
     <PreferenceCategory

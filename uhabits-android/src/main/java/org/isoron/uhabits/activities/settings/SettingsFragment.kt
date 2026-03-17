@@ -27,6 +27,7 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.DocumentsContract
 import android.provider.Settings
+import android.text.format.DateFormat
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -36,6 +37,7 @@ import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
 import androidx.preference.PreferenceFragmentCompat
 import androidx.recyclerview.widget.RecyclerView
+import com.android.datetimepicker.time.TimePickerDialog
 import org.isoron.uhabits.HabitsApplication
 import org.isoron.uhabits.R
 import org.isoron.uhabits.activities.habits.list.RESULT_BUG_REPORT
@@ -43,7 +45,9 @@ import org.isoron.uhabits.activities.habits.list.RESULT_EXPORT_CSV
 import org.isoron.uhabits.activities.habits.list.RESULT_EXPORT_DB
 import org.isoron.uhabits.activities.habits.list.RESULT_IMPORT_DATA
 import org.isoron.uhabits.activities.habits.list.RESULT_REPAIR_DB
+import org.isoron.uhabits.core.models.PaletteColor
 import org.isoron.uhabits.core.preferences.Preferences
+import org.isoron.uhabits.core.reminders.ReminderScheduler
 import org.isoron.uhabits.core.ui.NotificationTray
 import org.isoron.uhabits.core.utils.DateUtils.Companion.getLongWeekdayNames
 import org.isoron.uhabits.notifications.AndroidNotificationTray.Companion.createAndroidNotificationChannel
@@ -51,6 +55,7 @@ import org.isoron.uhabits.notifications.RingtoneManager
 import org.isoron.uhabits.utils.StyledResources
 import org.isoron.uhabits.utils.applyBottomInset
 import org.isoron.uhabits.utils.startActivitySafely
+import org.isoron.uhabits.utils.toFixedAndroidColor
 import org.isoron.uhabits.widgets.WidgetUpdater
 import java.util.Calendar
 
@@ -59,6 +64,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
     private var ringtoneManager: RingtoneManager? = null
     private lateinit var prefs: Preferences
     private var widgetUpdater: WidgetUpdater? = null
+    private var reminderScheduler: ReminderScheduler? = null
 
     @Deprecated("Deprecated in Java")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -88,6 +94,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         if (appContext is HabitsApplication) {
             prefs = appContext.component.preferences
             widgetUpdater = appContext.component.widgetUpdater
+            reminderScheduler = appContext.component.reminderScheduler
         }
         setResultOnPreferenceClick("importData", RESULT_IMPORT_DATA)
         setResultOnPreferenceClick("exportCSV", RESULT_EXPORT_CSV)
@@ -150,6 +157,10 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
                 startActivityForResult(intent, PUBLIC_BACKUP_REQUEST_CODE)
                 return true
             }
+            "pref_nightly_backup_time" -> {
+                showNightlyBackupTimePicker()
+                return true
+            }
         }
         return super.onPreferenceTreeClick(preference)
     }
@@ -165,8 +176,41 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
         }
         updateWeekdayPreference()
         updatePublicBackupFolderSummary()
+        updateNightlyBackupTimeSummary()
 
         findPreference("reminderSound").isVisible = false
+    }
+
+    private fun showNightlyBackupTimePicker() {
+        val hour = prefs.nightlyBackupTime / 60
+        val minute = prefs.nightlyBackupTime % 60
+        val dialog = TimePickerDialog.newInstance(
+            object : TimePickerDialog.OnTimeSetListener {
+                override fun onTimeSet(view: com.android.datetimepicker.time.RadialPickerLayout?, hourOfDay: Int, minute: Int) {
+                    prefs.nightlyBackupTime = hourOfDay * 60 + minute
+                    updateNightlyBackupTimeSummary()
+                }
+
+                override fun onTimeCleared(view: com.android.datetimepicker.time.RadialPickerLayout?) {
+                    // NOP
+                }
+            },
+            hour,
+            minute,
+            DateFormat.is24HourFormat(requireContext()),
+            PaletteColor(11).toFixedAndroidColor()
+        )
+        dialog.show(requireActivity().supportFragmentManager, "nightlyBackupTimePicker")
+    }
+
+    private fun updateNightlyBackupTimeSummary() {
+        val pref = findPreference("pref_nightly_backup_time") ?: return
+        val hour = prefs.nightlyBackupTime / 60
+        val minute = prefs.nightlyBackupTime % 60
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, hour)
+        calendar.set(Calendar.MINUTE, minute)
+        pref.summary = DateFormat.getTimeFormat(requireContext()).format(calendar.time)
     }
 
     private fun updateWeekdayPreference() {
@@ -188,6 +232,12 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
             Log.d("SettingsFragment", "updating widgets")
             widgetUpdater!!.updateWidgets()
         }
+
+        if ((key == "pref_nightly_backup" || key == "pref_nightly_backup_time") && reminderScheduler != null) {
+            Log.d("SettingsFragment", "scheduling alarms")
+            reminderScheduler!!.scheduleAll()
+        }
+
         BackupManager.dataChanged("org.isoron.uhabits")
         updateWeekdayPreference()
     }

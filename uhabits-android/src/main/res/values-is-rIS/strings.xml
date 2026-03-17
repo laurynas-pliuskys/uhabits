@@ -152,7 +152,7 @@
     <string name="measurable_example">t.d., Hversu marga kílómetra hljópstu í dag? Hvað lasstu margar blaðsíður?</string>
     <string name="x_times_per_week">%d sinnum í viku</string>
     <string name="x_times_per_month">%d sinnum á mánuði</string>
-    <string name="x_times_per_y_days">%d sinnum á %d dögum</string>
+    <string name="x_times_per_y_days" formatted="false">%d sinnum á %d dögum</string>
     <string name="yes_or_no_short_example">t.d., Æfa sig</string>
     <string name="color">Litur</string>
     <string name="example_target">t.d., 15</string>

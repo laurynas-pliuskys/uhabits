@@ -94,6 +94,10 @@ class ReminderReceiver : BroadcastReceiver() {
                         )
                     }
                 }
+                ACTION_AUTO_BACKUP -> {
+                    Log.d("ReminderReceiver", "onAutoBackup")
+                    reminderController.onAutoBackup()
+                }
                 Intent.ACTION_BOOT_COMPLETED -> {
                     Log.d("ReminderReceiver", "onBootCompleted")
                     reminderController.onBootCompleted()
@@ -108,6 +112,7 @@ class ReminderReceiver : BroadcastReceiver() {
         const val ACTION_DISMISS_REMINDER = "org.isoron.uhabits.ACTION_DISMISS_REMINDER"
         const val ACTION_SHOW_REMINDER = "org.isoron.uhabits.ACTION_SHOW_REMINDER"
         const val ACTION_SNOOZE_REMINDER = "org.isoron.uhabits.ACTION_SNOOZE_REMINDER"
+        const val ACTION_AUTO_BACKUP = "org.isoron.uhabits.ACTION_AUTO_BACKUP"
         private const val TAG = "ReminderReceiver"
         var lastReceivedIntent: Intent? = null
             private set

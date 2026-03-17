@@ -194,7 +194,7 @@
     <string name="measurable_example">örn: Bugün kaç km koştun? Bugün kaç sayfa kitap okudun?</string>
     <string name="x_times_per_week">Haftada %d kez</string>
     <string name="x_times_per_month">Ayda %d kez</string>
-    <string name="x_times_per_y_days">%d defa / %d gün</string>
+    <string name="x_times_per_y_days" formatted="false">%d defa / %d gün</string>
     <string name="yes_or_no_short_example">örn: Egzersiz</string>
     <string name="color">Renk</string>
     <string name="example_target">örn: 15</string>

@@ -188,7 +188,7 @@
     <string name="measurable_example">Ví dụ: Hôm nay bạn đã chạy bao nhiêu dặm? Bạn đã đọc bao nhiêu trang?</string>
     <string name="x_times_per_week">%d lần mỗi tuần</string>
     <string name="x_times_per_month">%d lần mỗi tháng</string>
-    <string name="x_times_per_y_days">%d lần trong %d ngày</string>
+    <string name="x_times_per_y_days" formatted="false">%d lần trong %d ngày</string>
     <string name="yes_or_no_short_example">Ví dụ: Tập thể dục</string>
     <string name="color">Màu sắc</string>
     <string name="example_target">Ví dụ: 15</string>

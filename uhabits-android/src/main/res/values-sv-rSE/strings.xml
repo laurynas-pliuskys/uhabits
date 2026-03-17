@@ -203,7 +203,7 @@
     <string name="measurable_example">t.ex. Hur många kilometer sprang du idag? Hur många sidor läste du?</string>
     <string name="x_times_per_week">%d gånger per vecka</string>
     <string name="x_times_per_month">%d gånger per månad</string>
-    <string name="x_times_per_y_days">%d gånger per %d dag(ar)</string>
+    <string name="x_times_per_y_days" formatted="false">%d gånger per %d dag(ar)</string>
     <string name="yes_or_no_short_example">t.ex. Träna</string>
     <string name="color">Färg</string>
     <string name="example_target">t.ex. 15</string>

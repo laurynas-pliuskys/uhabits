@@ -223,7 +223,7 @@
 प्रति सप्ताह %d बार\"</string>
     <string name="x_times_per_month">\"
 प्रति माह %d बार\"</string>
-    <string name="x_times_per_y_days">%d बार %d दिन</string>
+    <string name="x_times_per_y_days" formatted="false">%d बार %d दिन</string>
     <string name="yes_or_no_short_example">जैसे व्यायाम</string>
     <string name="color">रंग</string>
     <string name="example_target">जैसे १५</string>

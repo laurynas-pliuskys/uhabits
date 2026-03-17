@@ -80,6 +80,11 @@ class IntentScheduler
         return schedule(updateTime, intent, RTC)
     }
 
+    override fun scheduleBackup(backupTime: Long): SchedulerResult {
+        val intent = pendingIntents.autoBackup()
+        return schedule(backupTime, intent, RTC_WAKEUP)
+    }
+
     override fun log(componentName: String, msg: String) {
         Log.d(componentName, msg)
     }

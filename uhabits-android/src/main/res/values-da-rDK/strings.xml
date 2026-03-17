@@ -197,7 +197,7 @@
     <string name="measurable_example">f.eks Hvor mange kilometer kørte du i dag? Hvor mange sider læste du?</string>
     <string name="x_times_per_week">%d gange om ugen</string>
     <string name="x_times_per_month">%d gange om måneden</string>
-    <string name="x_times_per_y_days">%d gange på %d dage</string>
+    <string name="x_times_per_y_days" formatted="false">%d gange på %d dage</string>
     <string name="yes_or_no_short_example">f.eks. Motion</string>
     <string name="color">Farve</string>
     <string name="example_target">f.eks. 15</string>
