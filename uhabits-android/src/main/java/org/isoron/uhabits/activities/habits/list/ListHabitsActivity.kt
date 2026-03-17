@@ -138,7 +138,7 @@ class ListHabitsActivity : AppCompatActivity(), Preferences.Listener {
             }
         }
 
-        taskRunner.run {
+        taskRunner.execute {
             try {
                 AutoBackup(this@ListHabitsActivity).run()
                 appComponent.widgetUpdater.updateWidgets()

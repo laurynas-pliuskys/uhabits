@@ -36,6 +36,7 @@ import org.isoron.platform.gui.toInt
 import org.isoron.uhabits.R
 import org.isoron.uhabits.core.models.Habit
 import org.isoron.uhabits.core.models.ModelObservable
+import org.isoron.uhabits.core.preferences.Preferences
 import org.isoron.uhabits.core.ui.screens.habits.list.ListHabitsBehavior
 import org.isoron.uhabits.inject.ActivityContext
 import org.isoron.uhabits.utils.currentTheme
@@ -43,8 +44,6 @@ import org.isoron.uhabits.utils.dp
 import org.isoron.uhabits.utils.getFontAwesome
 import org.isoron.uhabits.utils.sres
 import javax.inject.Inject
-
-import org.isoron.uhabits.core.preferences.Preferences
 
 class RoutineCardViewFactory
 @Inject constructor(
