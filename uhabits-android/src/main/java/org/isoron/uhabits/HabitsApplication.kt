@@ -77,7 +77,6 @@ class HabitsApplication : Application() {
         }
 
         val habitList = component.habitList
-        for (h in habitList) h.recompute()
 
         widgetUpdater = component.widgetUpdater.apply {
             startListening()
@@ -92,6 +91,7 @@ class HabitsApplication : Application() {
 
         val taskRunner = component.taskRunner
         taskRunner.execute {
+            for (h in habitList) h.recompute()
             reminderScheduler.scheduleAll()
             widgetUpdater.updateWidgets()
         }

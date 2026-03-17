@@ -27,7 +27,7 @@ Full spec: `.automaker/app_spec.txt`
 | Flexible Habit Label Position | Settings option to move habit/routine labels to the right side |
 | Trinary State System & Rendering | Red/Green indicators for pass/fail when missing data enabled. Success/Failure/Unknown states already exist |
 | Gap Analysis Chart | `Stint`/`StintList` data model, `SmaCalculator`, `GapChart` DataView, `GapCardPresenter`, `GapCardView` — shown in ShowHabit for boolean habits only |
-| Startup Freeze Fix | Moved synchronous `AutoBackup` and `WidgetUpdater` calls to a background thread to prevent logo screen hangs. |
+| Startup Freeze Fix | Moved `habit.recompute()` loop from `Application.onCreate()` main thread into background `taskRunner.execute` block. Was blocking main thread for 450ms+ per 4 habits (scales to seconds with real data). Serial executor guarantees recompute finishes before `RefreshTask` reads computed data. |
 | Nightly Backup | Added configurable daily automatic backups to the user-selected folder via `AlarmManager`. |
 
 ## Backlog Features
