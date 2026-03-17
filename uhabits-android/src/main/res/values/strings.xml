@@ -197,9 +197,11 @@
     <string name="target_type">Target Type</string>
     <string name="target_type_at_least">At least</string>
     <string name="target_type_at_most">At most</string>
-    <string name="habit_direction">Direction</string>
-    <string name="habit_direction_positive">Positive (Do it)</string>
-    <string name="habit_direction_negative">Negative (Avoid it)</string>
+    <string name="habit_direction">Tracking method</string>
+    <string name="habit_direction_positive">Streak</string>
+    <string name="habit_direction_negative">Interval</string>
+    <string name="habit_direction_streak_desc">Counts consecutive completions. Missed days reset the streak.</string>
+    <string name="habit_direction_interval_desc">Counts days between completions. Gaps are expected.</string>
     <string name="example_question_boolean">e.g. Did you exercise today?</string>
     <string name="question">Question</string>
     <string name="target">Target</string>

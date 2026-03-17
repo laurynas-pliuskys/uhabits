@@ -27,7 +27,9 @@ import android.text.Html
 import android.text.Spanned
 import android.text.format.DateFormat
 import android.view.View
+import android.view.ViewGroup
 import android.widget.ArrayAdapter
+import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -192,11 +194,25 @@ class EditHabitActivity : AppCompatActivity(), CommandRunner.Listener {
 
         populateDirection()
         binding.directionPicker.setOnClickListener {
+            val items = listOf(
+                Pair(getString(R.string.habit_direction_positive), getString(R.string.habit_direction_streak_desc)),
+                Pair(getString(R.string.habit_direction_negative), getString(R.string.habit_direction_interval_desc))
+            )
+            val adapter = object : ArrayAdapter<Pair<String, String>>(
+                this,
+                android.R.layout.simple_list_item_2,
+                items
+            ) {
+                override fun getView(position: Int, convertView: android.view.View?, parent: ViewGroup): android.view.View {
+                    val view = convertView ?: layoutInflater.inflate(android.R.layout.simple_list_item_2, parent, false)
+                    val item = getItem(position)!!
+                    view.findViewById<TextView>(android.R.id.text1).text = item.first
+                    view.findViewById<TextView>(android.R.id.text2).text = item.second
+                    return view
+                }
+            }
             val builder = AlertDialog.Builder(this)
-            val arrayAdapter = ArrayAdapter<String>(this, android.R.layout.select_dialog_item)
-            arrayAdapter.add(getString(R.string.habit_direction_positive))
-            arrayAdapter.add(getString(R.string.habit_direction_negative))
-            builder.setAdapter(arrayAdapter) { dialog, which ->
+            builder.setAdapter(adapter) { dialog, which ->
                 direction = HabitDirection.fromInt(which)
                 populateDirection()
                 dialog.dismiss()
