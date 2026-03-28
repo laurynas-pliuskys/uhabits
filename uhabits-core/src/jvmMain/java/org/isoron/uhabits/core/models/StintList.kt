@@ -59,10 +59,12 @@ class StintList {
         }
 
         // NEGATIVE direction: streak mode — measure runs of YES between NO events.
+        // UNKNOWN (missing data) also breaks streaks: an unrecorded day cannot count as sobriety.
+        // Only SKIP is neutral (intentionally skipped days don't end a streak).
         var stintStart: Timestamp? = null
 
         for (entry in entries) {
-            val isEvent = entry.value == Entry.NO
+            val isEvent = entry.value == Entry.NO || entry.value == Entry.UNKNOWN
 
             if (isEvent) {
                 if (stintStart != null) {
@@ -72,11 +74,11 @@ class StintList {
                     }
                     stintStart = null
                 }
-            } else if (entry.value != Entry.UNKNOWN && entry.value != Entry.SKIP) {
-                // Non-event, non-neutral: extends or starts a stint
+            } else if (entry.value != Entry.SKIP) {
+                // YES entries extend or start a stint
                 if (stintStart == null) stintStart = entry.timestamp
             }
-            // UNKNOWN or SKIP: neutral — stintStart unchanged
+            // SKIP: neutral — stintStart unchanged
         }
 
         // Active stint: current ongoing period with no closing event

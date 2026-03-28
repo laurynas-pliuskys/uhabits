@@ -30,6 +30,7 @@ import org.junit.Test
 import java.util.Calendar
 import java.util.Random
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class EntryListTest {
     @Test
@@ -93,6 +94,29 @@ class EntryListTest {
         // Second call should replace all previously added entries
         computed.recomputeFrom(EntryList(), Frequency(1, 3), isNumerical = false)
         assertEquals(listOf(), computed.getKnown())
+    }
+
+    @Test
+    fun testComputeBooleanNegative() {
+        // NEGATIVE direction (streak tracking): missing days must NOT get YES_AUTO.
+        // Only explicitly recorded entries should appear in computed entries.
+        val today = DateUtils.getToday()
+
+        val original = EntryList()
+        original.add(Entry(today.minus(4), YES_MANUAL))
+        original.add(Entry(today.minus(9), YES_MANUAL))
+        original.add(Entry(today.minus(10), YES_MANUAL))
+
+        val computed = EntryList()
+        computed.recomputeFrom(original, Frequency(1, 3), isNumerical = false, direction = HabitDirection.NEGATIVE)
+
+        // Only the original YES_MANUAL entries; no YES_AUTO gap-filling.
+        val known = computed.getKnown()
+        assertEquals(3, known.size)
+        assertTrue(known.none { it.value == YES_AUTO }, "NEGATIVE direction must not generate YES_AUTO entries")
+        assertEquals(Entry(today.minus(4), YES_MANUAL), known[0])
+        assertEquals(Entry(today.minus(9), YES_MANUAL), known[1])
+        assertEquals(Entry(today.minus(10), YES_MANUAL), known[2])
     }
 
     @Test

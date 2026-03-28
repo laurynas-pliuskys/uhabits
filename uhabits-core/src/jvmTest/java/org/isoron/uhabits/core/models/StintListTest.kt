@@ -53,50 +53,21 @@ class StintListTest : BaseUnitTest() {
         stints.recompute(entries, ts(10), ts(0), HabitDirection.NEGATIVE)
         val result = stints.getAll()
 
-        // Stint between day 10 and day 4: days 9, 8, 7 (length 3, ends day before NO on day 4)
-        // Active stint from day 3 to day 0 (length 3+1=? let's see: ts(3) to ts(0) = 3+1=4? Wait:
-        // ts(3).daysUntil(ts(0)) = 3, so length = 3+1 = 4? No: daysAgo means days in the past.
-        // ts(3) is 3 days ago, ts(0) is today.
-        // daysUntil: (ts(0).unixTime - ts(3).unixTime) / DAY_LENGTH = 3
-        // length = 3 + 1 = 4? That means 4 days: day-3, day-2, day-1, day-0.
-        // But we only added entries for day-3 and day-2. The stint extends to `to` = ts(0).
-        // Entries between day 3 and day 4 (the second NO): days 9, 8, 7 → starts day 9.
-        // End = day_of_event - 1 = ts(4).minus(1) = ts(3). But ts(3) >= ts(9)? No: ts(9) is older.
-        // stintStart = ts(9), stintEnd = ts(4+1-1) = ts(4).minus(1) = ts(3+? Wait:
-        // event is ts(4), so stintEnd = ts(4).minus(1) which is 4-1 = ts(5)? No:
-        // minus(1) subtracts 1 day. ts(4) is 4 days ago. ts(4).minus(1) = ts(4) - 1 day = 5 days ago = ts(5).
-        // Hmm, but the stint started at ts(9) and ends at ts(5)? That's days 9,8,7,6,5 = 5 days.
-        // But I only added entries for days 9,8,7. Days 6 and 5 are UNKNOWN (not in entries).
-        // UNKNOWN is neutral - doesn't break stints. But do they start stints? No, only non-event non-UNKNOWN/SKIP.
-        // stintStart gets set when we hit YES_MANUAL at ts(9). Then UNKNOWN days ts(8)? No wait:
-        // I added ts(9)=YES, ts(8)=YES, ts(7)=YES and ts(4)=NO. Days 6 and 5 are UNKNOWN.
-        // When we walk ts(10)..ts(0) chronologically: ts(10)=NO (event, stintStart=null stays null).
-        // ts(9)=YES_MANUAL → stintStart=ts(9).
-        // ts(8)=YES_MANUAL → stintStart stays ts(9).
-        // ts(7)=YES_MANUAL → stintStart stays ts(9).
-        // ts(6)=UNKNOWN (not in entries, so EntryList.get returns UNKNOWN) → neutral, stintStart stays ts(9).
-        // ts(5)=UNKNOWN → neutral, stintStart stays ts(9).
-        // ts(4)=NO (event) → stintEnd = ts(4).minus(1) = ts(5)? No: ts(4).minus(1) is ts minus 1 day.
-        // ts(4) is Timestamp 4 days in the past. ts(4).minus(1) means subtract 1 day = 5 days ago = ts(5).
-        // So stint is Stint(ts(9), ts(5), false). length = ts(9).daysUntil(ts(5)) + 1.
-        // ts(9) is 9 days ago, ts(5) is 5 days ago. daysUntil = (newer - older) in days = 4. length = 5.
-        // Wait but ts(9) is the OLDER timestamp, ts(5) is NEWER.
-        // ts(9).daysUntil(ts(5)) = (ts(5).unixTime - ts(9).unixTime) / DAY_LENGTH = 4. length = 5.
-        // Then ts(3)=YES, ts(2)=YES, ts(1)=UNKNOWN, ts(0)=UNKNOWN.
-        // After NO at ts(4): stintStart=null.
-        // ts(3)=YES → stintStart=ts(3).
-        // ts(2)=YES → stintStart stays ts(3).
-        // ts(1)=UNKNOWN → neutral, stintStart stays ts(3).
-        // ts(0)=UNKNOWN → neutral.
-        // After loop: stintStart=ts(3), active = Stint(ts(3), ts(0), true). length = 3+1=4.
+        // ts(10)=NO → null. ts(9,8,7)=YES → stintStart=ts(9).
+        // ts(6)=UNKNOWN → breaks stint: Stint(ts(9), ts(7), false), length=3.
+        // ts(5)=UNKNOWN → null stays null. ts(4)=NO → null stays null.
+        // ts(3,2)=YES → stintStart=ts(3).
+        // ts(1)=UNKNOWN → breaks stint: Stint(ts(3), ts(2), false), length=2.
+        // ts(0)=UNKNOWN → null. No active stint.
         assertThat(result.size, equalTo(2))
         assertThat(result[0].start, equalTo(ts(9)))
-        assertThat(result[0].end, equalTo(ts(5)))
-        assertThat(result[0].length, equalTo(5))
+        assertThat(result[0].end, equalTo(ts(7)))
+        assertThat(result[0].length, equalTo(3))
         assertThat(result[0].isActive, equalTo(false))
         assertThat(result[1].start, equalTo(ts(3)))
-        assertThat(result[1].end, equalTo(ts(0)))
-        assertThat(result[1].isActive, equalTo(true))
+        assertThat(result[1].end, equalTo(ts(2)))
+        assertThat(result[1].length, equalTo(2))
+        assertThat(result[1].isActive, equalTo(false))
     }
 
     @Test
@@ -130,12 +101,12 @@ class StintListTest : BaseUnitTest() {
     }
 
     @Test
-    fun testMissingDataIsNeutral() {
-        // UNKNOWN entries don't break stints
+    fun testMissingDataBreaksStreak() {
+        // UNKNOWN (missing) entries break stints, just like NO events
         val entries = buildEntries(
             8 to Entry.NO,
             7 to Entry.YES_MANUAL,
-            6 to Entry.UNKNOWN, // neutral — should not break stint
+            6 to Entry.UNKNOWN, // breaks the streak
             5 to Entry.YES_MANUAL,
             4 to Entry.NO
         )
@@ -143,18 +114,19 @@ class StintListTest : BaseUnitTest() {
         stints.recompute(entries, ts(8), ts(0), HabitDirection.NEGATIVE)
         val result = stints.getAll()
 
-        // ts(8)=NO (event), stintStart=null.
-        // ts(7)=YES → stintStart=ts(7).
-        // ts(6)=UNKNOWN → neutral, stintStart stays ts(7).
-        // ts(5)=YES → extends, stintStart stays ts(7).
-        // ts(4)=NO (event) → stintEnd=ts(5). Stint(ts(7), ts(5), false). length=3.
-        // ts(3..0) all UNKNOWN → stintStart stays null.
-        // No active stint.
-        assertThat(result.size, equalTo(1))
+        // ts(8)=NO → null. ts(7)=YES → stintStart=ts(7).
+        // ts(6)=UNKNOWN → breaks: Stint(ts(7), ts(7), false), length=1.
+        // ts(5)=YES → stintStart=ts(5). ts(4)=NO → Stint(ts(5), ts(5), false), length=1.
+        // ts(3..0) all UNKNOWN → null. No active stint.
+        assertThat(result.size, equalTo(2))
         assertThat(result[0].start, equalTo(ts(7)))
-        assertThat(result[0].end, equalTo(ts(5)))
-        assertThat(result[0].length, equalTo(3))
+        assertThat(result[0].end, equalTo(ts(7)))
+        assertThat(result[0].length, equalTo(1))
         assertThat(result[0].isActive, equalTo(false))
+        assertThat(result[1].start, equalTo(ts(5)))
+        assertThat(result[1].end, equalTo(ts(5)))
+        assertThat(result[1].length, equalTo(1))
+        assertThat(result[1].isActive, equalTo(false))
     }
 
     @Test
@@ -169,23 +141,49 @@ class StintListTest : BaseUnitTest() {
         stints.recompute(entries, ts(5), ts(0), HabitDirection.NEGATIVE)
         val result = stints.getAll()
 
-        // ts(5)=NO → stintStart=null.
-        // ts(4)=NO → stintStart still null, no stint to record.
+        // ts(5)=NO → null. ts(4)=NO → null (no stint to record).
         // ts(3)=YES → stintStart=ts(3).
-        // ts(2..0)=UNKNOWN → neutral.
-        // Active stint: Stint(ts(3), ts(0), true). length=4.
+        // ts(2)=UNKNOWN → breaks: Stint(ts(3), ts(3), false), length=1.
+        // ts(1..0)=UNKNOWN → null stays null. No active stint.
         assertThat(result.size, equalTo(1))
-        assertThat(result[0].isActive, equalTo(true))
+        assertThat(result[0].isActive, equalTo(false))
         assertThat(result[0].start, equalTo(ts(3)))
+        assertThat(result[0].end, equalTo(ts(3)))
+        assertThat(result[0].length, equalTo(1))
     }
 
     @Test
-    fun testActiveStint_extendsToToday() {
+    fun testActiveStint_requiresTodayRecorded() {
+        // Days 1 and 0 are unrecorded (UNKNOWN) — stint closes at last YES day
         val entries = buildEntries(
             5 to Entry.NO,
             4 to Entry.YES_MANUAL,
             3 to Entry.YES_MANUAL,
             2 to Entry.YES_MANUAL
+        )
+        val stints = StintList()
+        stints.recompute(entries, ts(5), ts(0), HabitDirection.NEGATIVE)
+        val result = stints.getAll()
+
+        // ts(5)=NO → null. ts(4,3,2)=YES → stintStart=ts(4).
+        // ts(1)=UNKNOWN → breaks: Stint(ts(4), ts(2), false), length=3. ts(0)=UNKNOWN → null.
+        assertThat(result.size, equalTo(1))
+        assertThat(result[0].start, equalTo(ts(4)))
+        assertThat(result[0].end, equalTo(ts(2)))
+        assertThat(result[0].isActive, equalTo(false))
+        assertThat(result[0].length, equalTo(3))
+    }
+
+    @Test
+    fun testActiveStint_whenTodayIsRecorded() {
+        // Active streak only shown when today (ts(0)) is explicitly recorded
+        val entries = buildEntries(
+            5 to Entry.NO,
+            4 to Entry.YES_MANUAL,
+            3 to Entry.YES_MANUAL,
+            2 to Entry.YES_MANUAL,
+            1 to Entry.YES_MANUAL,
+            0 to Entry.YES_MANUAL
         )
         val stints = StintList()
         stints.recompute(entries, ts(5), ts(0), HabitDirection.NEGATIVE)
@@ -199,8 +197,8 @@ class StintListTest : BaseUnitTest() {
     }
 
     @Test
-    fun testNoEvents_singleActiveStint() {
-        // All successes (NEGATIVE habit) → single active stint spanning entire range
+    fun testNoEvents_stintClosedByUnrecordedToday() {
+        // All confirmed YES days except today → stint closes at ts(1), not active
         val entries = buildEntries(
             4 to Entry.YES_MANUAL,
             3 to Entry.YES_MANUAL,
@@ -211,10 +209,12 @@ class StintListTest : BaseUnitTest() {
         stints.recompute(entries, ts(4), ts(0), HabitDirection.NEGATIVE)
         val result = stints.getAll()
 
+        // ts(4,3,2,1)=YES → stintStart=ts(4). ts(0)=UNKNOWN → Stint(ts(4), ts(1), false), length=4.
         assertThat(result.size, equalTo(1))
-        assertThat(result[0].isActive, equalTo(true))
+        assertThat(result[0].isActive, equalTo(false))
         assertThat(result[0].start, equalTo(ts(4)))
-        assertThat(result[0].end, equalTo(ts(0)))
+        assertThat(result[0].end, equalTo(ts(1)))
+        assertThat(result[0].length, equalTo(4))
     }
 
     @Test

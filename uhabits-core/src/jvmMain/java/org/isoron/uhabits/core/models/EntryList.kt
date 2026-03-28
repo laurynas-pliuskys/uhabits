@@ -83,18 +83,24 @@ open class EntryList {
     /**
      * Replaces all entries in this list by entries computed automatically from another list.
      *
-     * For boolean habits, this function creates additional entries (with value YES_AUTO) according
-     * to the frequency of the habit. For numerical habits, this function simply copies all entries.
+     * For boolean habits with POSITIVE direction, this function creates additional entries (with
+     * value YES_AUTO) according to the frequency of the habit, filling gaps within intervals.
+     *
+     * For boolean habits with NEGATIVE direction (streak tracking), missing days must stay UNKNOWN
+     * so they are not counted as completions. Only explicitly recorded entries are copied.
+     *
+     * For numerical habits, this function simply copies all entries.
      */
     @Synchronized
     open fun recomputeFrom(
         originalEntries: EntryList,
         frequency: Frequency,
-        isNumerical: Boolean
+        isNumerical: Boolean,
+        direction: HabitDirection = HabitDirection.POSITIVE
     ) {
         clear()
         val original = originalEntries.getKnown()
-        if (isNumerical) {
+        if (isNumerical || direction == HabitDirection.NEGATIVE) {
             original.forEach { add(it) }
         } else {
             val intervals = buildIntervals(frequency, original)

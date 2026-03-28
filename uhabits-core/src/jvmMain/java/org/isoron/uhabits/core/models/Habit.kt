@@ -82,7 +82,8 @@ data class Habit(
         computedEntries.recomputeFrom(
             originalEntries = originalEntries,
             frequency = frequency,
-            isNumerical = isNumerical
+            isNumerical = isNumerical,
+            direction = direction
         )
 
         val today = DateUtils.getTodayWithOffset()
