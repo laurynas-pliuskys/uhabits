@@ -94,7 +94,7 @@ class ShowHabitActivity : AppCompatActivity(), CommandRunner.Listener {
             screen = screen
         )
 
-        view = ShowHabitView(this)
+        view = ShowHabitView(this, preferences)
 
         val menuPresenter = ShowHabitMenuPresenter(
             commandRunner = commandRunner,

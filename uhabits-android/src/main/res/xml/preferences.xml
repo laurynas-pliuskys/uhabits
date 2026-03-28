@@ -165,6 +165,48 @@
     </PreferenceCategory>
 
     <PreferenceCategory
+            android:key="statisticsCategory"
+            android:title="Statistics">
+
+        <SwitchPreferenceCompat
+                android:defaultValue="true"
+                android:key="pref_show_score_card"
+                android:title="@string/pref_show_score_card_title"
+                app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+                android:defaultValue="true"
+                android:key="pref_show_bar_card"
+                android:title="@string/pref_show_bar_card_title"
+                app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+                android:defaultValue="true"
+                android:key="pref_show_history_card"
+                android:title="@string/pref_show_history_card_title"
+                app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+                android:defaultValue="true"
+                android:key="pref_show_streak_card"
+                android:title="@string/pref_show_streak_card_title"
+                app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+                android:defaultValue="true"
+                android:key="pref_show_gap_card"
+                android:title="@string/pref_show_gap_card_title"
+                app:iconSpaceReserved="false" />
+
+        <SwitchPreferenceCompat
+                android:defaultValue="true"
+                android:key="pref_show_frequency_card"
+                android:title="@string/pref_show_frequency_card_title"
+                app:iconSpaceReserved="false" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory
             android:key="pref_key_debug"
             android:title="@string/troubleshooting">
 

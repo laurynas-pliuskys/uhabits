@@ -143,6 +143,12 @@
     <string name="pref_nightly_backup_title">Nightly Backup</string>
     <string name="pref_nightly_backup_summary">Automatically back up your data every night to the chosen folder.</string>
     <string name="pref_nightly_backup_time_title">Backup Time</string>
+    <string name="pref_show_score_card_title">Show score chart</string>
+    <string name="pref_show_bar_card_title">Show bar chart</string>
+    <string name="pref_show_history_card_title">Show history</string>
+    <string name="pref_show_streak_card_title">Show streaks</string>
+    <string name="pref_show_gap_card_title">Show gap analysis</string>
+    <string name="pref_show_frequency_card_title">Show frequency chart</string>
     <string name="bug_report_failed">Failed to generate bug report.</string>
     <string name="generate_bug_report">Generate bug report</string>
     <string name="troubleshooting">Troubleshooting</string>

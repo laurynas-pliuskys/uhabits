@@ -202,6 +202,24 @@ open class Preferences(private val storage: Storage) {
             storage.putInt("pref_nightly_backup_time", time)
         }
 
+    val isScoreCardEnabled: Boolean
+        get() = storage.getBoolean("pref_show_score_card", true)
+
+    val isBarCardEnabled: Boolean
+        get() = storage.getBoolean("pref_show_bar_card", true)
+
+    val isHistoryCardEnabled: Boolean
+        get() = storage.getBoolean("pref_show_history_card", true)
+
+    val isStreakCardEnabled: Boolean
+        get() = storage.getBoolean("pref_show_streak_card", true)
+
+    val isGapCardEnabled: Boolean
+        get() = storage.getBoolean("pref_show_gap_card", true)
+
+    val isFrequencyCardEnabled: Boolean
+        get() = storage.getBoolean("pref_show_frequency_card", true)
+
     fun updateLastHint(number: Int, timestamp: Timestamp) {
         storage.putInt("last_hint_number", number)
         storage.putLong("last_hint_timestamp", timestamp.unixTime)

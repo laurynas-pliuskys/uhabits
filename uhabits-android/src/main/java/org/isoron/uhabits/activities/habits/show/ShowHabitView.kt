@@ -21,7 +21,9 @@ package org.isoron.uhabits.activities.habits.show
 
 import android.content.Context
 import android.view.LayoutInflater
+import android.view.View.GONE
 import android.widget.FrameLayout
+import org.isoron.uhabits.core.preferences.Preferences
 import org.isoron.uhabits.core.ui.screens.habits.show.ShowHabitPresenter
 import org.isoron.uhabits.core.ui.screens.habits.show.ShowHabitState
 import org.isoron.uhabits.databinding.ShowHabitBinding
@@ -29,7 +31,7 @@ import org.isoron.uhabits.utils.applyBottomInset
 import org.isoron.uhabits.utils.applyToolbarInsets
 import org.isoron.uhabits.utils.setupToolbar
 
-class ShowHabitView(context: Context) : FrameLayout(context) {
+class ShowHabitView(context: Context, private val preferences: Preferences) : FrameLayout(context) {
     private val binding = ShowHabitBinding.inflate(LayoutInflater.from(context))
 
     init {
@@ -60,6 +62,12 @@ class ShowHabitView(context: Context) : FrameLayout(context) {
         } else {
             binding.targetCard.visibility = GONE
         }
+        if (!preferences.isScoreCardEnabled) binding.scoreCard.visibility = GONE
+        if (!preferences.isBarCardEnabled) binding.barCard.visibility = GONE
+        if (!preferences.isHistoryCardEnabled) binding.historyCard.visibility = GONE
+        if (!preferences.isStreakCardEnabled) binding.streakCard.visibility = GONE
+        if (!preferences.isGapCardEnabled) binding.gapCard.visibility = GONE
+        if (!preferences.isFrequencyCardEnabled) binding.frequencyCard.visibility = GONE
         binding.linearLayout.applyBottomInset()
     }
 
