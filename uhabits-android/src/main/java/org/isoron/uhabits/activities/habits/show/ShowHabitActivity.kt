@@ -19,6 +19,7 @@
 package org.isoron.uhabits.activities.habits.show
 
 import android.content.ContentUris
+import android.content.Intent
 import android.os.Bundle
 import android.view.HapticFeedbackConstants
 import android.view.Menu
@@ -38,6 +39,7 @@ import org.isoron.uhabits.activities.common.dialogs.CheckmarkDialog
 import org.isoron.uhabits.activities.common.dialogs.ConfirmDeleteDialog
 import org.isoron.uhabits.activities.common.dialogs.HistoryEditorDialog
 import org.isoron.uhabits.activities.common.dialogs.NumberDialog
+import org.isoron.uhabits.activities.habits.list.ListHabitsActivity
 import org.isoron.uhabits.core.commands.Command
 import org.isoron.uhabits.core.commands.CommandRunner
 import org.isoron.uhabits.core.models.Habit
@@ -116,6 +118,14 @@ class ShowHabitActivity : AppCompatActivity(), CommandRunner.Listener {
 
     override fun onCreateOptionsMenu(m: Menu): Boolean {
         return menu.onCreateOptionsMenu(m)
+    }
+
+    override fun onSupportNavigateUp(): Boolean {
+        val upIntent = Intent(this, ListHabitsActivity::class.java)
+        upIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP)
+        startActivity(upIntent)
+        finish()
+        return true
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
