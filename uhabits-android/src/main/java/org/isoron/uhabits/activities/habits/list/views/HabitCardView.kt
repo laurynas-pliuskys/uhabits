@@ -222,10 +222,8 @@ class HabitCardView(
             innerFrame.addView(checkmarkPanel)
             innerFrame.addView(numberPanel)
             innerFrame.addView(label)
-            innerFrame.addView(scoreRing)
             label.gravity = Gravity.START or Gravity.CENTER_VERTICAL
         } else {
-            innerFrame.addView(scoreRing)
             innerFrame.addView(label)
             innerFrame.addView(checkmarkPanel)
             innerFrame.addView(numberPanel)
