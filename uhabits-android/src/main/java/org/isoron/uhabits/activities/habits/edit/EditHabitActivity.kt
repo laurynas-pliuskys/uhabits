@@ -195,8 +195,8 @@ class EditHabitActivity : AppCompatActivity(), CommandRunner.Listener {
         populateDirection()
         binding.directionPicker.setOnClickListener {
             val items = listOf(
-                Pair(getString(R.string.habit_direction_positive), getString(R.string.habit_direction_streak_desc)),
-                Pair(getString(R.string.habit_direction_negative), getString(R.string.habit_direction_interval_desc))
+                Pair(getString(R.string.habit_direction_positive), getString(R.string.habit_direction_interval_desc)),
+                Pair(getString(R.string.habit_direction_negative), getString(R.string.habit_direction_streak_desc))
             )
             val adapter = object : ArrayAdapter<Pair<String, String>>(
                 this,
