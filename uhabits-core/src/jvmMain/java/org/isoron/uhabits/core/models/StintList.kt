@@ -39,13 +39,30 @@ class StintList {
         // getByInterval returns newest-first; reverse for chronological order
         val entries = computedEntries.getByInterval(from, to).reversed()
 
+        if (direction == HabitDirection.POSITIVE) {
+            // Interval mode: each bar = gap from one YES event to the next.
+            var prevYes: Timestamp? = null
+            for (entry in entries) {
+                val isYes = entry.value == Entry.YES_MANUAL || entry.value == Entry.YES_AUTO
+                if (isYes) {
+                    if (prevYes != null) {
+                        list.add(Stint(prevYes, entry.timestamp.minus(1), isActive = false))
+                    }
+                    prevYes = entry.timestamp
+                }
+            }
+            if (prevYes != null) {
+                list.add(Stint(prevYes, to, isActive = true))
+            }
+            list.removeAll { it.length <= 0 }
+            return
+        }
+
+        // NEGATIVE direction: streak mode — measure runs of YES between NO events.
         var stintStart: Timestamp? = null
 
         for (entry in entries) {
-            val isEvent = when (direction) {
-                HabitDirection.NEGATIVE -> entry.value == Entry.NO
-                HabitDirection.POSITIVE -> entry.value == Entry.YES_MANUAL || entry.value == Entry.YES_AUTO
-            }
+            val isEvent = entry.value == Entry.NO
 
             if (isEvent) {
                 if (stintStart != null) {
@@ -58,10 +75,8 @@ class StintList {
             } else if (entry.value != Entry.UNKNOWN && entry.value != Entry.SKIP) {
                 // Non-event, non-neutral: extends or starts a stint
                 if (stintStart == null) stintStart = entry.timestamp
-            } else {
-                // UNKNOWN or SKIP: neutral — don't break stintStart but don't start one either
-                // (if stintStart is already set, it remains set)
             }
+            // UNKNOWN or SKIP: neutral — stintStart unchanged
         }
 
         // Active stint: current ongoing period with no closing event

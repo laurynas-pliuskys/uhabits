@@ -22,6 +22,7 @@ import org.isoron.uhabits.core.BaseUnitTest
 import org.isoron.uhabits.core.models.Habit
 import org.isoron.uhabits.core.models.Reminder
 import org.isoron.uhabits.core.models.WeekdayList
+import org.isoron.uhabits.core.preferences.Preferences
 import org.isoron.uhabits.core.preferences.WidgetPreferences
 import org.isoron.uhabits.core.utils.DateUtils.Companion.applyTimezone
 import org.isoron.uhabits.core.utils.DateUtils.Companion.getStartOfTodayCalendar
@@ -48,6 +49,7 @@ class ReminderSchedulerTest : BaseUnitTest() {
 
     private val sys: ReminderScheduler.SystemScheduler = mock()
     private val widgetPreferences: WidgetPreferences = mock()
+    private val preferences: Preferences = mock()
 
     @Before
     @Throws(Exception::class)

@@ -101,11 +101,11 @@ class StintListTest : BaseUnitTest() {
 
     @Test
     fun testPositive_basicStints() {
-        // POSITIVE habit: event = YES_MANUAL; stints are gaps between successes
-        // successes on day 10 and day 4; failures (NO) in between = the gap
+        // POSITIVE (interval) habit: each bar = gap from one YES to the next.
+        // NO entries between YES events are ignored; only YES timestamps matter.
         val entries = buildEntries(
             10 to Entry.YES_MANUAL,
-            9 to Entry.NO,
+            9 to Entry.NO, // ignored in interval mode
             8 to Entry.NO,
             7 to Entry.NO,
             4 to Entry.YES_MANUAL,
@@ -116,23 +116,17 @@ class StintListTest : BaseUnitTest() {
         stints.recompute(entries, ts(10), ts(0), HabitDirection.POSITIVE)
         val result = stints.getAll()
 
-        // ts(10)=YES (event), stintStart=null stays null.
-        // ts(9)=NO → non-event, non-UNKNOWN/SKIP → stintStart=ts(9).
-        // ts(8)=NO, ts(7)=NO → stintStart stays ts(9).
-        // ts(6)=UNKNOWN, ts(5)=UNKNOWN → neutral.
-        // ts(4)=YES (event) → stintEnd = ts(4).minus(1) = ts(5). Stint(ts(9), ts(5), false). length=5.
-        // ts(3)=NO → stintStart=ts(3).
-        // ts(2)=NO → stintStart stays ts(3).
-        // ts(1)=UNKNOWN, ts(0)=UNKNOWN → neutral.
-        // After loop: Stint(ts(3), ts(0), true). length=4.
+        // Interval from ts(10) to ts(4): end=ts(5), length = ts(10).daysUntil(ts(5)) + 1 = 5+1 = 6
+        // Active from ts(4) to ts(0): length = 4+1 = 5
         assertThat(result.size, equalTo(2))
-        assertThat(result[0].start, equalTo(ts(9)))
+        assertThat(result[0].start, equalTo(ts(10)))
         assertThat(result[0].end, equalTo(ts(5)))
-        assertThat(result[0].length, equalTo(5))
+        assertThat(result[0].length, equalTo(6))
         assertThat(result[0].isActive, equalTo(false))
-        assertThat(result[1].start, equalTo(ts(3)))
+        assertThat(result[1].start, equalTo(ts(4)))
         assertThat(result[1].end, equalTo(ts(0)))
         assertThat(result[1].isActive, equalTo(true))
+        assertThat(result[1].length, equalTo(5))
     }
 
     @Test
@@ -262,28 +256,63 @@ class StintListTest : BaseUnitTest() {
         assertThat(result[0].length, equalTo(1))
     }
 
+    // Real use case: interval habit (e.g., medication) where user only marks YES on dose days.
+    // Days between doses are UNKNOWN (not explicitly NO). Each gap between consecutive YES
+    // events should produce one bar.
+    @Test
+    fun testPositive_intervalWithUnknownGaps() {
+        val entries = buildEntries(
+            10 to Entry.YES_MANUAL, // dose on day 10
+            4 to Entry.YES_MANUAL, // dose on day 4 (6-day gap from day 10)
+            1 to Entry.YES_MANUAL // dose on day 1 (3-day gap from day 4)
+            // days 9,8,7,6,5,3,2 are UNKNOWN (not added)
+        )
+        val stints = StintList()
+        stints.recompute(entries, ts(10), ts(0), HabitDirection.POSITIVE)
+        val result = stints.getAll()
+
+        // Expect 3 stints:
+        //   Stint(ts(10), ts(5), false): end=ts(4).minus(1)=ts(5), length=ts(10).daysUntil(ts(5))+1=5+1=6
+        //   Stint(ts(4), ts(2), false): end=ts(1).minus(1)=ts(2), length=ts(4).daysUntil(ts(2))+1=2+1=3
+        //   Stint(ts(1), ts(0), true): active, length = 1+1 = 2
+        assertThat(result.size, equalTo(3))
+        assertThat(result[0].start, equalTo(ts(10)))
+        assertThat(result[0].end, equalTo(ts(5)))
+        assertThat(result[0].length, equalTo(6))
+        assertThat(result[0].isActive, equalTo(false))
+        assertThat(result[1].start, equalTo(ts(4)))
+        assertThat(result[1].end, equalTo(ts(2)))
+        assertThat(result[1].length, equalTo(3))
+        assertThat(result[1].isActive, equalTo(false))
+        assertThat(result[2].start, equalTo(ts(1)))
+        assertThat(result[2].end, equalTo(ts(0)))
+        assertThat(result[2].isActive, equalTo(true))
+        assertThat(result[2].length, equalTo(2))
+    }
+
     @Test
     fun testYesAutoCountsAsEventForPositive() {
-        // For POSITIVE direction, YES_AUTO also counts as an event
+        // For POSITIVE (interval) direction, YES_AUTO also anchors an interval
         val entries = buildEntries(
-            5 to Entry.YES_AUTO, // event for POSITIVE
-            4 to Entry.NO,
+            5 to Entry.YES_AUTO, // first completion
+            4 to Entry.NO, // ignored in interval mode
             3 to Entry.NO,
-            2 to Entry.YES_MANUAL // event for POSITIVE
+            2 to Entry.YES_MANUAL // second completion
         )
         val stints = StintList()
         stints.recompute(entries, ts(5), ts(0), HabitDirection.POSITIVE)
         val result = stints.getAll()
 
-        // ts(5)=YES_AUTO (event), stintStart=null.
-        // ts(4)=NO → stintStart=ts(4).
-        // ts(3)=NO → stintStart stays ts(4).
-        // ts(2)=YES_MANUAL (event) → stintEnd=ts(3). Stint(ts(4), ts(3), false). length=2.
-        // ts(1)=UNKNOWN, ts(0)=UNKNOWN → neutral, stintStart stays null. No active stint.
-        assertThat(result.size, equalTo(1))
-        assertThat(result[0].start, equalTo(ts(4)))
+        // Interval from ts(5) to ts(2): end=ts(2).minus(1)=ts(3), length=ts(5).daysUntil(ts(3))+1=2+1=3
+        // Active from ts(2) to ts(0): length = 2+1 = 3
+        assertThat(result.size, equalTo(2))
+        assertThat(result[0].start, equalTo(ts(5)))
         assertThat(result[0].end, equalTo(ts(3)))
-        assertThat(result[0].length, equalTo(2))
+        assertThat(result[0].length, equalTo(3))
         assertThat(result[0].isActive, equalTo(false))
+        assertThat(result[1].start, equalTo(ts(2)))
+        assertThat(result[1].end, equalTo(ts(0)))
+        assertThat(result[1].isActive, equalTo(true))
+        assertThat(result[1].length, equalTo(3))
     }
 }

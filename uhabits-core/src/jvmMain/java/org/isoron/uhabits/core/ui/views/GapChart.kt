@@ -71,8 +71,11 @@ class GapChart(
 
         fun barCenterX(col: Int) = barLeft(col) + barWidth / 2
 
-        // Map visible column index to stints index (newest = rightmost = col nColumns-1)
-        fun stintIndex(col: Int): Int = stints.size - 1 - (nColumns - 1 - col) - dataOffset
+        // Map visible column index to stints index.
+        // When all stints fit on screen, left-align: oldest at col 0, empty space on the right.
+        // When there are more stints than columns, right-anchor: newest at rightmost col, scrollable.
+        fun stintIndex(col: Int): Int =
+            if (stints.size <= nColumns) { col } else { stints.size - nColumns + col - dataOffset }
 
         // Draw grid lines
         canvas.setStrokeWidth(0.5)
