@@ -157,7 +157,7 @@ class GapChart(
             if (stint.isActive) {
                 canvas.drawText("Now", x, axisY + theme.smallTextSize * 1.0)
             } else {
-                val date = stint.end.toLocalDate()
+                val date = (stint.end + 1).toLocalDate()
                 canvas.drawText(dateFormatter.shortMonthName(date), x, axisY + theme.smallTextSize * 1.0)
                 canvas.drawText(date.day.toString(), x, axisY + theme.smallTextSize * 2.4)
             }
