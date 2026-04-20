@@ -4,6 +4,9 @@ on:
   pull_request:
     types: [closed]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     if: github.event.pull_request.merged == true
@@ -27,8 +30,31 @@ jobs:
       - name: Build debug APK
         run: ./gradlew :uhabits-android:assembleDebug --stacktrace
 
-      - name: Upload debug APK
+      - name: Read app version
+        id: version
+        run: |
+          VERSION=$(grep versionName uhabits-android/build.gradle.kts | sed -e 's/.*"\([^"]*\)".*/\1/g')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Rename APK
+        run: |
+          cp uhabits-android/build/outputs/apk/debug/uhabits-android-debug.apk \
+             uhabits-android/build/outputs/apk/debug/loop-${{ steps.version.outputs.version }}-build${{ github.run_number }}-debug.apk
+
+      - name: Upload debug APK as artifact
         uses: actions/upload-artifact@v4
         with:
           name: uhabits-android-debug
-          path: uhabits-android/build/outputs/apk/debug/uhabits-android-debug.apk
+          path: uhabits-android/build/outputs/apk/debug/loop-${{ steps.version.outputs.version }}-build${{ github.run_number }}-debug.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}-build${{ github.run_number }}
+          name: Loop ${{ steps.version.outputs.version }} (build ${{ github.run_number }})
+          body: |
+            Automated debug build from merged PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}
+
+            Download the APK below and install it on your device. Debug APKs are unsigned, so Android may show an "unknown source" warning on install.
+          files: uhabits-android/build/outputs/apk/debug/loop-${{ steps.version.outputs.version }}-build${{ github.run_number }}-debug.apk
+          prerelease: true
