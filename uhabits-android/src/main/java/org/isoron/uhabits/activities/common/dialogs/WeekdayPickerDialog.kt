@@ -69,7 +69,7 @@ class WeekdayPickerDialog :
                 selectedDays,
                 this
             )
-            .setPositiveButton(android.R.string.yes, this)
+            .setPositiveButton(android.R.string.ok, this)
             .setNegativeButton(
                 android.R.string.cancel
             ) { _: DialogInterface?, _: Int -> dismiss() }

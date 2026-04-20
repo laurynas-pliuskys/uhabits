@@ -119,6 +119,7 @@ class AndroidNotificationTray
         // Even though the set of actions is the same on the phone and
         // on the watch, Pebble requires us to add them to the
         // WearableExtender.
+        @Suppress("DEPRECATION")
         val wearableExtender = WearableExtender().setBackground(wearableBg)
 
         val defaultText = context.getString(R.string.default_reminder_question)

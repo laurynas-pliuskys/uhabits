@@ -20,6 +20,7 @@ package org.isoron.uhabits.utils
 
 import android.content.Context
 import android.util.AttributeSet
+import androidx.core.content.ContextCompat
 import org.jetbrains.annotations.Contract
 
 object AttributeSetUtils {
@@ -58,7 +59,7 @@ object AttributeSetUtils {
         defaultValue: Int?
     ): Int? {
         val resId = attrs.getAttributeResourceValue(ISORON_NAMESPACE, name, 0)
-        return if (resId != 0) context.resources.getColor(resId) else defaultValue
+        return if (resId != 0) ContextCompat.getColor(context, resId) else defaultValue
     }
 
     @JvmStatic

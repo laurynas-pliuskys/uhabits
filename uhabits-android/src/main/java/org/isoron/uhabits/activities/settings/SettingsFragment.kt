@@ -32,6 +32,8 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.preference.ListPreference
 import androidx.preference.Preference
 import androidx.preference.PreferenceCategory
@@ -66,26 +68,21 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
     private var widgetUpdater: WidgetUpdater? = null
     private var reminderScheduler: ReminderScheduler? = null
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            RINGTONE_REQUEST_CODE -> {
-                ringtoneManager!!.update(data)
-                updateRingtoneDescription()
-                return
-            }
-            PUBLIC_BACKUP_REQUEST_CODE -> {
-                val uri = data?.data ?: return
-                val flags =
-                    Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
-                requireContext().contentResolver.takePersistableUriPermission(uri, flags)
-                sharedPrefs?.edit()?.putString("publicBackupFolder", uri.toString())?.apply()
-                updatePublicBackupFolderSummary()
-                return
-            }
+    private val ringtonePickerLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            ringtoneManager?.update(result.data)
+            updateRingtoneDescription()
         }
-        super.onActivityResult(requestCode, resultCode, data)
-    }
+
+    private val publicBackupFolderLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            val uri = result.data?.data ?: return@registerForActivityResult
+            val flags =
+                Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION
+            requireContext().contentResolver.takePersistableUriPermission(uri, flags)
+            sharedPrefs?.edit()?.putString("publicBackupFolder", uri.toString())?.apply()
+            updatePublicBackupFolderSummary()
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -154,7 +151,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
                         Intent.FLAG_GRANT_WRITE_URI_PERMISSION or
                         Intent.FLAG_GRANT_PERSISTABLE_URI_PERMISSION
                 )
-                startActivityForResult(intent, PUBLIC_BACKUP_REQUEST_CODE)
+                publicBackupFolderLauncher.launch(intent)
                 return true
             }
             "pref_nightly_backup_time" -> {
@@ -270,7 +267,7 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
             android.media.RingtoneManager.EXTRA_RINGTONE_EXISTING_URI,
             existingRingtoneUri
         )
-        startActivityForResult(intent, RINGTONE_REQUEST_CODE)
+        ringtonePickerLauncher.launch(intent)
     }
 
     private fun updateRingtoneDescription() {
@@ -308,10 +305,5 @@ class SettingsFragment : PreferenceFragmentCompat(), OnSharedPreferenceChangeLis
             "file" -> java.io.File(uri.path!!).absolutePath
             else -> null
         }
-    }
-
-    companion object {
-        private const val RINGTONE_REQUEST_CODE = 1
-        private const val PUBLIC_BACKUP_REQUEST_CODE = 2
     }
 }

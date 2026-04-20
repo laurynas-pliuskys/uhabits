@@ -61,6 +61,14 @@ android {
                 storePassword = System.getenv("LOOP_STORE_PASSWORD")
             }
         }
+        if (System.getenv("DEBUG_KEYSTORE_FILE") != null) {
+            named("debug") {
+                storeFile = file(System.getenv("DEBUG_KEYSTORE_FILE"))
+                storePassword = System.getenv("DEBUG_KEYSTORE_PASSWORD") ?: "android"
+                keyAlias = System.getenv("DEBUG_KEY_ALIAS") ?: "androiddebugkey"
+                keyPassword = System.getenv("DEBUG_KEY_PASSWORD") ?: "android"
+            }
+        }
     }
 
     buildTypes {

@@ -28,7 +28,9 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.PointF
 import android.graphics.drawable.ColorDrawable
+import android.os.Build
 import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import android.view.LayoutInflater
 import android.view.MotionEvent
@@ -157,10 +159,19 @@ fun Activity.showSendEmailScreen(
 }
 
 fun Activity.restartWithFade(cls: Class<*>?) {
-    Handler().postDelayed(
+    Handler(Looper.getMainLooper()).postDelayed(
         {
             finish()
-            overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+                overrideActivityTransition(
+                    Activity.OVERRIDE_TRANSITION_CLOSE,
+                    android.R.anim.fade_in,
+                    android.R.anim.fade_out
+                )
+            } else {
+                @Suppress("DEPRECATION")
+                overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out)
+            }
             startActivity(Intent(this, cls))
         },
         500
@@ -185,6 +196,8 @@ fun View.setupToolbar(
     toolbar.background = ColorDrawable(toolbarColor)
     toolbar.applyToolbarInsets()
     val activity = context as AppCompatActivity
+    // statusBarColor is deprecated in API 35 for edge-to-edge; minSdk=28 still requires it.
+    @Suppress("DEPRECATION")
     activity.window.statusBarColor = toolbarColor
     activity.setSupportActionBar(toolbar)
     activity.supportActionBar?.setDisplayHomeAsUpEnabled(displayHomeAsUpEnabled)

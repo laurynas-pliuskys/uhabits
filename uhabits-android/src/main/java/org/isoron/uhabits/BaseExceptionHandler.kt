@@ -25,9 +25,7 @@ class BaseExceptionHandler(private val activity: Activity) : Thread.UncaughtExce
     private val originalHandler: Thread.UncaughtExceptionHandler? =
         Thread.getDefaultUncaughtExceptionHandler()
 
-    override fun uncaughtException(thread: Thread?, ex: Throwable?) {
-        if (ex == null) return
-        if (thread == null) return
+    override fun uncaughtException(thread: Thread, ex: Throwable) {
         try {
             ex.printStackTrace()
             AndroidBugReporter(activity).dumpBugReportToFile()

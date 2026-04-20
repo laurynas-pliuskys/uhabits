@@ -27,6 +27,8 @@ import android.os.Bundle
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.result.contract.ActivityResultContracts.RequestPermission
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat.checkSelfPermission
@@ -70,6 +72,16 @@ class ListHabitsActivity : AppCompatActivity(), Preferences.Listener {
             } else {
                 Log.i("ListHabitsActivity", "POST_NOTIFICATIONS denied")
             }
+        }
+
+    val openDocumentLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            screen.onOpenDocumentResult(result.resultCode, result.data)
+        }
+
+    val settingsLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+            screen.onSettingsResult(result.resultCode)
         }
 
     private lateinit var menu: ListHabitsMenu
@@ -165,12 +177,6 @@ class ListHabitsActivity : AppCompatActivity(), Preferences.Listener {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         invalidateOptionsMenu()
         return menu.onItemSelected(item)
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(request: Int, result: Int, data: Intent?) {
-        super.onActivityResult(request, result, data)
-        screen.onResult(request, result, data)
     }
 
     private fun parseIntents() {

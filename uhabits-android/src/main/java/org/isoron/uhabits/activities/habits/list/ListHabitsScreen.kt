@@ -85,8 +85,6 @@ const val RESULT_EXPORT_CSV = 102
 const val RESULT_EXPORT_DB = 103
 const val RESULT_BUG_REPORT = 104
 const val RESULT_REPAIR_DB = 105
-const val REQUEST_OPEN_DOCUMENT = 106
-const val REQUEST_SETTINGS = 107
 
 @ActivityScope
 class ListHabitsScreen
@@ -108,7 +106,7 @@ class ListHabitsScreen
     ListHabitsMenuBehavior.Screen,
     ListHabitsSelectionMenuBehavior.Screen {
 
-    val activity = (context as AppCompatActivity)
+    val activity = (context as ListHabitsActivity)
 
     fun onAttached() {
         commandRunner.addListener(this)
@@ -123,14 +121,7 @@ class ListHabitsScreen
         if (msg != null) activity.showMessage(msg)
     }
 
-    fun onResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        when (requestCode) {
-            REQUEST_OPEN_DOCUMENT -> onOpenDocumentResult(resultCode, data)
-            REQUEST_SETTINGS -> onSettingsResult(resultCode)
-        }
-    }
-
-    private fun onOpenDocumentResult(resultCode: Int, data: Intent?) {
+    fun onOpenDocumentResult(resultCode: Int, data: Intent?) {
         if (data == null) return
         if (resultCode != Activity.RESULT_OK) return
         try {
@@ -145,7 +136,7 @@ class ListHabitsScreen
         }
     }
 
-    private fun onSettingsResult(resultCode: Int) {
+    fun onSettingsResult(resultCode: Int) {
         when (resultCode) {
             RESULT_IMPORT_DATA -> showImportScreen()
             RESULT_EXPORT_CSV -> behavior.get().onExportCSV()
@@ -191,7 +182,7 @@ class ListHabitsScreen
 
     fun showImportScreen() {
         val intent = intentFactory.openDocument()
-        activity.startActivityForResult(intent, REQUEST_OPEN_DOCUMENT)
+        activity.openDocumentLauncher.launch(intent)
     }
 
     override fun showIntroScreen() {
@@ -258,7 +249,7 @@ class ListHabitsScreen
 
     override fun showSettingsScreen() {
         val intent = intentFactory.startSettingsActivity(activity)
-        activity.startActivityForResult(intent, REQUEST_SETTINGS)
+        activity.settingsLauncher.launch(intent)
     }
 
     override fun showColorPicker(defaultColor: PaletteColor, callback: OnColorPickedCallback) {

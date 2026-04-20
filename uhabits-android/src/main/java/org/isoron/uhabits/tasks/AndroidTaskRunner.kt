@@ -18,7 +18,8 @@
  */
 package org.isoron.uhabits.tasks
 
-import android.os.AsyncTask
+import android.os.Handler
+import android.os.Looper
 import dagger.Module
 import dagger.Provides
 import org.isoron.uhabits.core.AppScope
@@ -26,69 +27,50 @@ import org.isoron.uhabits.core.tasks.Task
 import org.isoron.uhabits.core.tasks.TaskRunner
 import java.util.HashMap
 import java.util.LinkedList
+import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 // TODO: @Module not needed?
 @Module
 class AndroidTaskRunner : TaskRunner {
-    private val activeTasks: LinkedList<CustomAsyncTask> = LinkedList()
-    private val taskToAsyncTask: HashMap<Task, CustomAsyncTask> = HashMap()
+    private val activeTasks: LinkedList<Task> = LinkedList()
+    private val taskExecutor: ExecutorService = Executors.newSingleThreadExecutor()
+    private val mainHandler = Handler(Looper.getMainLooper())
+    private val cancelled: HashMap<Task, Boolean> = HashMap()
     private val listeners: LinkedList<TaskRunner.Listener> = LinkedList<TaskRunner.Listener>()
+
     override fun addListener(listener: TaskRunner.Listener) {
         listeners.add(listener)
     }
 
     override fun execute(task: Task) {
         task.onAttached(this)
-        CustomAsyncTask(task).execute()
+        mainHandler.post {
+            if (cancelled[task] == true) return@post
+            for (l in listeners) l.onTaskStarted(task)
+            activeTasks.add(task)
+            task.onPreExecute()
+            taskExecutor.execute {
+                if (cancelled[task] != true) task.doInBackground()
+                mainHandler.post {
+                    if (cancelled[task] != true) task.onPostExecute()
+                    activeTasks.remove(task)
+                    cancelled.remove(task)
+                    for (l in listeners) l.onTaskFinished(task)
+                }
+            }
+        }
     }
 
     override val activeTaskCount: Int
         get() = activeTasks.size
 
     override fun publishProgress(task: Task, progress: Int) {
-        val asyncTask = taskToAsyncTask[task] ?: return
-        asyncTask.publish(progress)
+        mainHandler.post { task.onProgressUpdate(progress) }
     }
 
     override fun removeListener(listener: TaskRunner.Listener) {
         listeners.remove(listener)
-    }
-
-    private inner class CustomAsyncTask(val task: Task) : AsyncTask<Void?, Int?, Void?>() {
-
-        fun publish(progress: Int) {
-            publishProgress(progress)
-        }
-
-        @Deprecated("Deprecated in Java")
-        override fun doInBackground(vararg params: Void?): Void? {
-            if (isCancelled) return null
-            task.doInBackground()
-            return null
-        }
-
-        @Deprecated("Deprecated in Java")
-        override fun onPostExecute(aVoid: Void?) {
-            if (isCancelled) return
-            task.onPostExecute()
-            activeTasks.remove(this)
-            taskToAsyncTask.remove(task)
-            for (l in listeners) l.onTaskFinished(task)
-        }
-
-        @Deprecated("Deprecated in Java")
-        override fun onPreExecute() {
-            if (isCancelled) return
-            for (l in listeners) l.onTaskStarted(task)
-            activeTasks.add(this)
-            taskToAsyncTask[task] = this
-            task.onPreExecute()
-        }
-
-        @Deprecated("Deprecated in Java")
-        override fun onProgressUpdate(vararg values: Int?) {
-            values[0]?.let { task.onProgressUpdate(it) }
-        }
     }
 
     @Module

@@ -72,7 +72,7 @@ class CheckmarkWidgetView : HabitWidgetView {
                 bgColor = activeColor
                 fgColor = res.getColor(R.attr.contrast0)
                 backgroundPaint!!.color = bgColor
-                frame!!.setBackgroundDrawable(background)
+                frame!!.background = background
             }
             NO, UNKNOWN -> {
                 bgColor = res.getColor(R.attr.cardBgColor)

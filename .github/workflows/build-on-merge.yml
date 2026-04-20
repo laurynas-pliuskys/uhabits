@@ -13,19 +13,27 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
 
       - name: Set up Gradle
-        uses: gradle/actions/setup-gradle@v4
+        uses: gradle/actions/setup-gradle@v6
 
       - name: Grant execute permission for gradlew
         run: chmod +x gradlew
+
+      - name: Decode debug keystore
+        env:
+          DEBUG_KEYSTORE_B64: ${{ secrets.DEBUG_KEYSTORE_B64 }}
+        if: env.DEBUG_KEYSTORE_B64 != ''
+        run: |
+          echo "$DEBUG_KEYSTORE_B64" | base64 -d > "$HOME/debug.keystore"
+          echo "DEBUG_KEYSTORE_FILE=$HOME/debug.keystore" >> "$GITHUB_ENV"
 
       - name: Build debug APK
         run: ./gradlew :uhabits-android:assembleDebug --stacktrace
@@ -42,13 +50,13 @@ jobs:
              uhabits-android/build/outputs/apk/debug/loop-${{ steps.version.outputs.version }}-build${{ github.run_number }}-debug.apk
 
       - name: Upload debug APK as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: uhabits-android-debug
           path: uhabits-android/build/outputs/apk/debug/loop-${{ steps.version.outputs.version }}-build${{ github.run_number }}-debug.apk
 
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           tag_name: v${{ steps.version.outputs.version }}-build${{ github.run_number }}
           name: Loop ${{ steps.version.outputs.version }} (build ${{ github.run_number }})

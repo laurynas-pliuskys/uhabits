@@ -23,7 +23,6 @@ import android.annotation.SuppressLint
 import android.content.res.ColorStateList
 import android.content.res.Resources
 import android.os.Bundle
-import android.text.Html
 import android.text.Spanned
 import android.text.format.DateFormat
 import android.view.View
@@ -33,6 +32,7 @@ import android.widget.TextView
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.text.HtmlCompat
 import androidx.fragment.app.DialogFragment
 import com.android.datetimepicker.time.RadialPickerLayout
 import com.android.datetimepicker.time.TimePickerDialog
@@ -522,6 +522,8 @@ class EditHabitActivity : AppCompatActivity(), CommandRunner.Listener {
         androidColor = themeSwitcher.currentTheme.color(color).toInt()
         binding.colorButton.backgroundTintList = ColorStateList.valueOf(androidColor)
         if (!themeSwitcher.isNightMode) {
+            // statusBarColor is deprecated in API 35 for edge-to-edge; minSdk=28 still requires it.
+            @Suppress("DEPRECATION")
             window.statusBarColor = androidColor
             binding.toolbar.setBackgroundColor(androidColor)
         }
@@ -529,7 +531,7 @@ class EditHabitActivity : AppCompatActivity(), CommandRunner.Listener {
 
     private fun getFormattedValidationError(@StringRes resId: Int): Spanned {
         val html = "<font color=#FFFFFF>${getString(resId)}</font>"
-        return Html.fromHtml(html)
+        return HtmlCompat.fromHtml(html, HtmlCompat.FROM_HTML_MODE_LEGACY)
     }
 
     override fun onSaveInstanceState(state: Bundle) {
