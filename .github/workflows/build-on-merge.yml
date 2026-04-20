@@ -1,0 +1,60 @@
+name: Build on PR Merge
+
+on:
+  pull_request:
+    types: [closed]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Grant execute permission for gradlew
+        run: chmod +x gradlew
+
+      - name: Build debug APK
+        run: ./gradlew :uhabits-android:assembleDebug --stacktrace
+
+      - name: Read app version
+        id: version
+        run: |
+          VERSION=$(grep versionName uhabits-android/build.gradle.kts | sed -e 's/.*"\([^"]*\)".*/\1/g')
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Rename APK
+        run: |
+          cp uhabits-android/build/outputs/apk/debug/uhabits-android-debug.apk \
+             uhabits-android/build/outputs/apk/debug/loop-${{ steps.version.outputs.version }}-build${{ github.run_number }}-debug.apk
+
+      - name: Upload debug APK as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: uhabits-android-debug
+          path: uhabits-android/build/outputs/apk/debug/loop-${{ steps.version.outputs.version }}-build${{ github.run_number }}-debug.apk
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.version.outputs.version }}-build${{ github.run_number }}
+          name: Loop ${{ steps.version.outputs.version }} (build ${{ github.run_number }})
+          body: |
+            Automated debug build from merged PR #${{ github.event.pull_request.number }}: ${{ github.event.pull_request.title }}
+
+            Download the APK below and install it on your device. Debug APKs are unsigned, so Android may show an "unknown source" warning on install.
+          files: uhabits-android/build/outputs/apk/debug/loop-${{ steps.version.outputs.version }}-build${{ github.run_number }}-debug.apk
+          prerelease: true
