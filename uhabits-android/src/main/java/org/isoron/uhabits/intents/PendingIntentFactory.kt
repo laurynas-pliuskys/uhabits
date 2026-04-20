@@ -81,8 +81,19 @@ class PendingIntentFactory
             FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT
         )
 
-    fun showHabit(habit: Habit): PendingIntent =
-        androidx.core.app.TaskStackBuilder
+    fun showHabit(habit: Habit): PendingIntent {
+        if (habit.isParentRoutine) {
+            val intent = Intent(context, ListHabitsActivity::class.java).apply {
+                flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP
+            }
+            return getActivity(
+                context,
+                (habit.id!! % Integer.MAX_VALUE).toInt() + 1,
+                intent,
+                FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT
+            )
+        }
+        return androidx.core.app.TaskStackBuilder
             .create(context)
             .addNextIntentWithParentStack(
                 intentFactory.startShowHabitActivity(
@@ -91,6 +102,7 @@ class PendingIntentFactory
                 )
             )
             .getPendingIntent(0, FLAG_IMMUTABLE or FLAG_UPDATE_CURRENT)!!
+    }
 
     fun showHabitTemplate(): PendingIntent {
         return getActivity(
