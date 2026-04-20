@@ -57,6 +57,8 @@ constructor(
     override fun applyDarkTheme() {
         currentTheme = DarkTheme()
         context.setTheme(R.style.AppBaseThemeDark)
+        // navigationBarColor is deprecated in API 35 for edge-to-edge; minSdk=28 still needs it.
+        @Suppress("DEPRECATION")
         (context as Activity).window.navigationBarColor =
             ContextCompat.getColor(context, R.color.grey_900)
     }
@@ -69,6 +71,8 @@ constructor(
     override fun applyPureBlackTheme() {
         currentTheme = PureBlackTheme()
         context.setTheme(R.style.AppBaseThemeDark_PureBlack)
+        // navigationBarColor is deprecated in API 35 for edge-to-edge; minSdk=28 still needs it.
+        @Suppress("DEPRECATION")
         (context as Activity).window.navigationBarColor =
             ContextCompat.getColor(context, R.color.black)
     }

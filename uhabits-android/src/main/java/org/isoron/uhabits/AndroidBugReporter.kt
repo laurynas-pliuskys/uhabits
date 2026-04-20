@@ -19,6 +19,7 @@
 package org.isoron.uhabits
 
 import android.content.Context
+import android.graphics.Point
 import android.os.Build
 import android.os.Environment
 import android.view.WindowManager
@@ -98,6 +99,7 @@ open class AndroidBugReporter @Inject constructor(@AppContext private val contex
 
     private fun getDeviceInfo(): String {
         val wm = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
+        val (width, height) = getScreenSize(wm)
         return buildString {
             appendLine("App Version Name: ${BuildConfig.VERSION_NAME}")
             appendLine("App Version Code: ${BuildConfig.VERSION_CODE}")
@@ -107,10 +109,24 @@ open class AndroidBugReporter @Inject constructor(@AppContext private val contex
             appendLine("Model (Product): ${Build.MODEL} (${Build.PRODUCT})")
             appendLine("Manufacturer: ${Build.MANUFACTURER}")
             appendLine("Other tags: ${Build.TAGS}")
-            appendLine("Screen Width: ${wm.defaultDisplay.width}")
-            appendLine("Screen Height: ${wm.defaultDisplay.height}")
+            appendLine("Screen Width: $width")
+            appendLine("Screen Height: $height")
             appendLine("External storage state: ${Environment.getExternalStorageState()}")
             appendLine()
+        }
+    }
+
+    private fun getScreenSize(wm: WindowManager): Pair<Int, Int> {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            val bounds = wm.currentWindowMetrics.bounds
+            bounds.width() to bounds.height()
+        } else {
+            @Suppress("DEPRECATION")
+            val display = wm.defaultDisplay
+            val size = Point()
+            @Suppress("DEPRECATION")
+            display.getSize(size)
+            size.x to size.y
         }
     }
 }

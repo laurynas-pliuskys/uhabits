@@ -24,6 +24,7 @@ import android.appwidget.AppWidgetManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.view.View
 import android.widget.RemoteViews
 import org.isoron.platform.utils.StringUtils
@@ -61,12 +62,21 @@ class StackWidget(
         serviceIntent.putExtra(StackWidgetService.WIDGET_TYPE, widgetType.value)
         serviceIntent.putExtra(StackWidgetService.HABIT_IDS, habitIds)
         serviceIntent.data = Uri.parse(serviceIntent.toUri(Intent.URI_INTENT_SCHEME))
-        remoteViews.setRemoteAdapter(
-            StackWidgetType.getStackWidgetAdapterViewId(widgetType),
-            serviceIntent
-        )
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+            remoteViews.setRemoteAdapter(
+                StackWidgetType.getStackWidgetAdapterViewId(widgetType),
+                serviceIntent
+            )
+        } else {
+            @Suppress("DEPRECATION")
+            remoteViews.setRemoteAdapter(
+                id,
+                StackWidgetType.getStackWidgetAdapterViewId(widgetType),
+                serviceIntent
+            )
+        }
         manager.notifyAppWidgetViewDataChanged(
-            id,
+            intArrayOf(id),
             StackWidgetType.getStackWidgetAdapterViewId(widgetType)
         )
         remoteViews.setEmptyView(

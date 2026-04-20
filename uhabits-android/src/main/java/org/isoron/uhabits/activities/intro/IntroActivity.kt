@@ -19,7 +19,6 @@
 
 package org.isoron.uhabits.activities.intro
 
-import android.graphics.Color
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import com.github.appintro.AppIntro2
@@ -37,29 +36,29 @@ class IntroActivity : AppIntro2() {
         showStatusBar(false)
 
         addSlide(
-            AppIntroFragment.newInstance(
-                getString(R.string.intro_title_1),
-                getString(R.string.intro_description_1),
-                R.drawable.intro_icon_1,
-                Color.parseColor("#194673")
+            AppIntroFragment.createInstance(
+                title = getString(R.string.intro_title_1),
+                description = getString(R.string.intro_description_1),
+                imageDrawable = R.drawable.intro_icon_1,
+                backgroundColorRes = R.color.intro_background_1
             )
         )
 
         addSlide(
-            AppIntroFragment.newInstance(
-                getString(R.string.intro_title_2),
-                getString(R.string.intro_description_2),
-                R.drawable.intro_icon_2,
-                Color.parseColor("#ffa726")
+            AppIntroFragment.createInstance(
+                title = getString(R.string.intro_title_2),
+                description = getString(R.string.intro_description_2),
+                imageDrawable = R.drawable.intro_icon_2,
+                backgroundColorRes = R.color.intro_background_2
             )
         )
 
         addSlide(
-            AppIntroFragment.newInstance(
-                getString(R.string.intro_title_4),
-                getString(R.string.intro_description_4),
-                R.drawable.intro_icon_4,
-                Color.parseColor("#9575cd")
+            AppIntroFragment.createInstance(
+                title = getString(R.string.intro_title_4),
+                description = getString(R.string.intro_description_4),
+                imageDrawable = R.drawable.intro_icon_4,
+                backgroundColorRes = R.color.intro_background_3
             )
         )
     }

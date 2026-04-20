@@ -65,7 +65,6 @@ class ScoreChart : ScrollableChart {
     private var scores: List<Score>? = null
     private var primaryColor = 0
 
-    @Deprecated("")
     private var bucketSize = 7
     private var internalBackgroundColor = 0
     private var internalDrawingCache: Bitmap? = null

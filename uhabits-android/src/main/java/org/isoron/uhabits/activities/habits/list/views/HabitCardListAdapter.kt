@@ -93,7 +93,6 @@ class HabitCardListAdapter @Inject constructor(
      * @param position position of the item
      * @return the item at given position or null if position is invalid
      */
-    @Deprecated("")
     fun getItem(position: Int): Habit? {
         return cache.getHabitByPosition(position)
     }

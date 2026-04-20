@@ -254,7 +254,6 @@ open class Preferences(private val storage: Storage) {
      * represented by 7. By default, this is based on the current system locale,
      * unless the user changed this in the settings.
      */
-    @get:Deprecated("")
     val firstWeekdayInt: Int
         get() {
             val weekday = storage.getString("pref_first_weekday", "")

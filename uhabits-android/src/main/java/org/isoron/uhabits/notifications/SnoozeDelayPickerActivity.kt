@@ -18,8 +18,10 @@
  */
 package org.isoron.uhabits.notifications
 
+import android.app.Activity
 import android.app.AlertDialog
 import android.content.ContentUris
+import android.os.Build
 import android.os.Bundle
 import android.text.format.DateFormat
 import android.view.View
@@ -110,6 +112,11 @@ class SnoozeDelayPickerActivity : FragmentActivity(), OnItemClickListener {
 
     override fun finish() {
         super.finish()
-        overridePendingTransition(0, 0)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.UPSIDE_DOWN_CAKE) {
+            overrideActivityTransition(Activity.OVERRIDE_TRANSITION_CLOSE, 0, 0)
+        } else {
+            @Suppress("DEPRECATION")
+            overridePendingTransition(0, 0)
+        }
     }
 }

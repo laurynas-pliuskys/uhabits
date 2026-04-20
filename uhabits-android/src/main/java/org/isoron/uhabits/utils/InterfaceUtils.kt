@@ -25,7 +25,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import android.widget.TextView.OnEditorActionListener
-import androidx.core.view.ViewCompat
 
 object InterfaceUtils {
     private var fontAwesome: Typeface? = null
@@ -86,7 +85,6 @@ object InterfaceUtils {
     }
 
     fun isLayoutRtl(view: View?): Boolean {
-        return ViewCompat.getLayoutDirection(view!!) ==
-            ViewCompat.LAYOUT_DIRECTION_RTL
+        return view!!.layoutDirection == View.LAYOUT_DIRECTION_RTL
     }
 }

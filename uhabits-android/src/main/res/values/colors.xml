@@ -90,4 +90,7 @@
 
     <color name="ic_launcher_background">#1976D2</color>
     <color name="color_background">@color/grey_200</color>
+    <color name="intro_background_1">#194673</color>
+    <color name="intro_background_2">#ffa726</color>
+    <color name="intro_background_3">#9575cd</color>
 </resources>

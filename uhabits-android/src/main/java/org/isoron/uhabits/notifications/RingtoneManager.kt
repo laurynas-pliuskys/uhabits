@@ -25,8 +25,9 @@ import android.content.SharedPreferences
 import android.media.RingtoneManager.EXTRA_RINGTONE_PICKED_URI
 import android.media.RingtoneManager.getRingtone
 import android.net.Uri
-import android.preference.PreferenceManager
 import android.provider.Settings
+import androidx.core.content.IntentCompat
+import androidx.preference.PreferenceManager
 import org.isoron.uhabits.R
 import org.isoron.uhabits.core.AppScope
 import org.isoron.uhabits.inject.AppContext
@@ -70,7 +71,11 @@ class RingtoneManager
 
     fun update(data: Intent?) {
         if (data == null) return
-        val ringtoneUri = data.getParcelableExtra<Uri>(EXTRA_RINGTONE_PICKED_URI)
+        val ringtoneUri = IntentCompat.getParcelableExtra(
+            data,
+            EXTRA_RINGTONE_PICKED_URI,
+            Uri::class.java
+        )
         if (ringtoneUri != null) {
             prefs.edit().putString("pref_ringtone_uri", ringtoneUri.toString()).apply()
         } else {

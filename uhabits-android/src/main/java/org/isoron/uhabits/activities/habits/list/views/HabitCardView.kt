@@ -267,6 +267,7 @@ class HabitCardView(
         val windowInsets = rootWindowInsets
         val xInset = windowInsets?.displayCutout?.safeInsetLeft ?: 0
         val yInset = if (SDK_INT <= Build.VERSION_CODES.VANILLA_ICE_CREAM) {
+            @Suppress("DEPRECATION")
             windowInsets?.systemWindowInsetTop ?: 0
         } else {
             0
@@ -343,7 +344,7 @@ class HabitCardView(
             android.R.attr.state_pressed,
             android.R.attr.state_enabled
         )
-        Handler().postDelayed({ background.state = intArrayOf() }, 25)
+        Handler(Looper.getMainLooper()).postDelayed({ background.state = intArrayOf() }, 25)
     }
 
     private fun updateBackground(isSelected: Boolean) {

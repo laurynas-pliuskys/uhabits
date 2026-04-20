@@ -21,6 +21,7 @@ package org.isoron.uhabits.receivers
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import org.isoron.uhabits.core.AppScope
 import org.isoron.uhabits.core.models.Habit
 import org.isoron.uhabits.core.models.Timestamp
@@ -84,7 +85,10 @@ class ReminderController @Inject constructor(
     }
 
     private fun showSnoozeDelayPicker(habit: Habit, context: Context) {
-        context.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
+            @Suppress("DEPRECATION")
+            context.sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
+        }
         val intent = Intent(context, SnoozeDelayPickerActivity::class.java)
         intent.data = Uri.parse(habit.uriString)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

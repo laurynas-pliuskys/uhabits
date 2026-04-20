@@ -27,6 +27,7 @@ import android.view.View
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
 import org.isoron.uhabits.R
 import org.isoron.uhabits.core.ui.screens.habits.list.HintList
 import org.isoron.uhabits.utils.dp
@@ -45,7 +46,7 @@ class HintView(
         val p1 = dp(16.0f).toInt()
         val p2 = dp(4.0f).toInt()
         setPadding(p1, p1, p2, p1)
-        setBackgroundColor(resources.getColor(R.color.indigo_500))
+        setBackgroundColor(ContextCompat.getColor(context, R.color.indigo_500))
 
         val hintTitle = TextView(context).apply {
             setTextColor(WHITE)
