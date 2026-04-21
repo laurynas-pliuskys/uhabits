@@ -41,10 +41,12 @@ class StintList {
 
         if (direction == HabitDirection.POSITIVE) {
             // Interval mode: each bar = gap from one YES event to the next.
+            // Only YES_MANUAL anchors an interval. YES_AUTO entries are frequency-driven
+            // auto-fills (e.g. a 1/7 habit marks the next 6 days automatically); counting
+            // them would create spurious 1-day gap bars between auto-filled days.
             var prevYes: Timestamp? = null
             for (entry in entries) {
-                val isYes = entry.value == Entry.YES_MANUAL || entry.value == Entry.YES_AUTO
-                if (isYes) {
+                if (entry.value == Entry.YES_MANUAL) {
                     if (prevYes != null) {
                         list.add(Stint(prevYes, entry.timestamp.minus(1), isActive = false))
                     }

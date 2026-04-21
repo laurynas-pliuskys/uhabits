@@ -291,28 +291,42 @@ class StintListTest : BaseUnitTest() {
     }
 
     @Test
-    fun testYesAutoCountsAsEventForPositive() {
-        // For POSITIVE (interval) direction, YES_AUTO also anchors an interval
+    fun testPositive_yesAutoIgnored() {
+        // YES_AUTO entries are frequency-driven auto-fills (e.g. weekly habits mark the
+        // next 6 days automatically). For POSITIVE (interval) direction, they must NOT
+        // anchor an interval — only true user actions (YES_MANUAL) should.
+        // Simulates a 1/7 habit: manual tick on day 12 → auto-fills days 11..6;
+        // manual tick on day 5 → auto-fills days 4..0. Expected: one 7-day gap.
         val entries = buildEntries(
-            5 to Entry.YES_AUTO, // first completion
-            4 to Entry.NO, // ignored in interval mode
-            3 to Entry.NO,
-            2 to Entry.YES_MANUAL // second completion
+            12 to Entry.YES_MANUAL,
+            11 to Entry.YES_AUTO,
+            10 to Entry.YES_AUTO,
+            9 to Entry.YES_AUTO,
+            8 to Entry.YES_AUTO,
+            7 to Entry.YES_AUTO,
+            6 to Entry.YES_AUTO,
+            5 to Entry.YES_MANUAL,
+            4 to Entry.YES_AUTO,
+            3 to Entry.YES_AUTO,
+            2 to Entry.YES_AUTO,
+            1 to Entry.YES_AUTO,
+            0 to Entry.YES_AUTO
         )
         val stints = StintList()
-        stints.recompute(entries, ts(5), ts(0), HabitDirection.POSITIVE)
+        stints.recompute(entries, ts(12), ts(0), HabitDirection.POSITIVE)
         val result = stints.getAll()
 
-        // Interval from ts(5) to ts(2): end=ts(2).minus(1)=ts(3), length=ts(5).daysUntil(ts(3))+1=2+1=3
-        // Active from ts(2) to ts(0): length = 2+1 = 3
+        // Only two YES_MANUAL anchors (day 12 and day 5) → one closed gap + one active.
+        // Closed: Stint(ts(12), ts(6), false), length = 12.daysUntil(6)+1 = 6+1 = 7
+        // Active: Stint(ts(5), ts(0), true), length = 5+1 = 6
         assertThat(result.size, equalTo(2))
-        assertThat(result[0].start, equalTo(ts(5)))
-        assertThat(result[0].end, equalTo(ts(3)))
-        assertThat(result[0].length, equalTo(3))
+        assertThat(result[0].start, equalTo(ts(12)))
+        assertThat(result[0].end, equalTo(ts(6)))
+        assertThat(result[0].length, equalTo(7))
         assertThat(result[0].isActive, equalTo(false))
-        assertThat(result[1].start, equalTo(ts(2)))
+        assertThat(result[1].start, equalTo(ts(5)))
         assertThat(result[1].end, equalTo(ts(0)))
         assertThat(result[1].isActive, equalTo(true))
-        assertThat(result[1].length, equalTo(3))
+        assertThat(result[1].length, equalTo(6))
     }
 }
